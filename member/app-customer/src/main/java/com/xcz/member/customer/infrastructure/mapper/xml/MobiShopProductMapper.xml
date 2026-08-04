@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.MobiShopProductMapper">
+
+    <select id="selectAdminProductPage" resultType="com.xcz.member.customer.domain.vo.AdminProductRowVO">
+        SELECT
+            p.product_id   AS productId,
+            p.shop_id      AS shopId,
+            s.shop_name    AS shopName,
+            p.category_id  AS categoryId,
+            p.product_name AS productName,
+            p.description  AS description,
+            p.image_url    AS imageUrl,
+            p.price        AS price,
+            p.status       AS status,
+            p.stock        AS stock,
+            p.sold_count   AS soldCount,
+            p.create_time  AS createTime
+        FROM mobi_shop_product p
+        LEFT JOIN mobi_shop s ON s.id = p.shop_id
+        <where>
+            <if test="query.shopId != null">
+                AND p.shop_id = #{query.shopId}
+            </if>
+            <if test="query.productName != null and query.productName != ''">
+                AND p.product_name LIKE CONCAT('%', #{query.productName}, '%')
+            </if>
+            <if test="query.status != null">
+                AND p.status = #{query.status}
+            </if>
+        </where>
+        ORDER BY p.product_id DESC
+    </select>
+
+</mapper>

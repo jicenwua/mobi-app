@@ -1,0 +1,16 @@
+{
+  "name": "mini-app-uni",
+  "private": true,
+  "version": "1.0.0",
+  "description": "小程序端依赖（请求加解密）",
+  "scripts": {
+    "fix:wechat": "node scripts/sync-wechat-project-config.js",
+    "prepare:wechat": "npm run fix:wechat",
+    "compress:static": "node scripts/compress-static-images.js"
+  },
+  "dependencies": {
+    "@uqrcode/js": "^4.0.7",
+    "crypto-js": "^4.2.0",
+    "jsencrypt": "^3.3.2"
+  }
+}

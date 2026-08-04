@@ -1,0 +1,145 @@
+
+.page.data-v-63602879 {
+	min-height: 100vh;
+	background: #f5f5f5;
+}
+.scroll.data-v-63602879 {
+	height: 100vh;
+}
+.scroll-inner.data-v-63602879 {
+	padding: 12px 16px 24px;
+	box-sizing: border-box;
+}
+.state-wrap.data-v-63602879 {
+	padding: 48px 16px;
+	text-align: center;
+}
+.state-text.data-v-63602879 {
+	color: #8a94a6;
+	font-size: 14px;
+}
+.period-bar.data-v-63602879 {
+	margin-bottom: 12px;
+}
+.period-track.data-v-63602879 {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.period-chip.data-v-63602879 {
+	padding: 6px 12px;
+	border-radius: 16px;
+	background: #fff;
+}
+.period-chip--active.data-v-63602879 {
+	background: rgba(0, 122, 255, 0.12);
+}
+.period-chip-text.data-v-63602879 {
+	font-size: 13px;
+	color: #007aff;
+}
+.custom-range-wrap.data-v-63602879 {
+	margin-top: 10px;
+	background: #fff;
+	border-radius: 12px;
+	padding: 8px 10px;
+}
+.scope-bar.data-v-63602879 {
+	margin-bottom: 12px;
+}
+.scope-track.data-v-63602879 {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.scope-chip.data-v-63602879 {
+	padding: 6px 12px;
+	border-radius: 16px;
+	background: #fff;
+}
+.scope-chip--active.data-v-63602879 {
+	background: rgba(0, 122, 255, 0.12);
+}
+.scope-chip-text.data-v-63602879 {
+	font-size: 13px;
+	color: #007aff;
+}
+.stats-grid.data-v-63602879 {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -5px;
+}
+.stat-card.data-v-63602879 {
+	width: 50%;
+	padding: 0 5px 10px;
+	box-sizing: border-box;
+}
+.stat-card > .stat-label.data-v-63602879,
+.stat-card > .stat-value.data-v-63602879 {
+	display: block;
+	background: #fff;
+	border-radius: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+.stat-card > .stat-label.data-v-63602879 {
+	padding-top: 14px;
+	padding-bottom: 0;
+	font-size: 12px;
+	color: #8a94a6;
+	margin-bottom: 0;
+}
+.stat-card > .stat-value.data-v-63602879 {
+	padding-top: 8px;
+	padding-bottom: 14px;
+	font-size: 22px;
+	font-weight: 700;
+	color: #1f2a37;
+}
+.stat-value--money.data-v-63602879 {
+	font-size: 18px;
+}
+.chart-card.data-v-63602879 {
+	margin-top: 2px;
+	background: #fff;
+	border-radius: 12px;
+	padding: 14px 12px 16px;
+}
+.chart-title.data-v-63602879 {
+	display: block;
+	font-size: 15px;
+	font-weight: 600;
+	color: #1f2a37;
+	margin-bottom: 8px;
+}
+.trend-canvas.data-v-63602879 {
+	display: block;
+}
+.legend-row.data-v-63602879 {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 8px;
+}
+.legend-item.data-v-63602879 {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: #667085;
+}
+.legend-dot.data-v-63602879 {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+.legend-dot--users.data-v-63602879 {
+	background: #007aff;
+}
+.legend-dot--orders.data-v-63602879 {
+	background: #34c759;
+}
+.legend-dot--points.data-v-63602879 {
+	background: #ff9500;
+}

@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "个人资料",
+  "backgroundColor": "#f5f5f5",
+  "backgroundColorContent": "#f5f5f5",
+  "enablePullDownRefresh": false,
+  "disableScroll": true,
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {
+    "profile-form": "../../components/profile/profile-form",
+    "qrcode-canvas": "../../components/common/qrcode-canvas",
+    "page-loading": "../../components/common/page-loading"
+  }
+}

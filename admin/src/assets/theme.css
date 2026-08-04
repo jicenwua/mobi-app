@@ -1,0 +1,320 @@
+/* ========================================
+   主题系统 — 日间 / 夜间统一配色与过渡
+   与 Element Plus html.dark 变量协同（见 main.js 引入顺序）
+   ======================================== */
+
+/* 主题切换时：颜色与常见背景平滑过渡（避免全量 * 过渡造成卡顿） */
+html {
+  transition:
+    color-scheme 0.35s ease,
+    background-color 0.35s ease;
+}
+
+html.light,
+html.dark,
+body,
+#app {
+  transition:
+    color 0.35s ease,
+    background-color 0.35s ease;
+}
+
+/* ---------- 日间：清爽石板灰 + 靛青侧栏 ---------- */
+:root,
+:root.light {
+  color-scheme: light;
+
+  /* 主色：略偏靛的蓝，与 Element 默认接近但更易搭灰底 */
+  --primary-color: #3b6cff;
+  --primary-color-light: #6d94ff;
+  --primary-color-dark: #2f56cc;
+
+  --bg-color: #ffffff;
+  --bg-color-secondary: #f1f5f9;
+  --bg-color-tertiary: #e2e8f0;
+
+  /* 侧栏：与主内容区同系格子画布 + 面板式菜单 */
+  --sidebar-bg: #f4f4f4;
+  --sidebar-bg-pattern:
+    linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  --sidebar-bg-size: 24px 24px;
+  --sidebar-text: #64748b;
+  --sidebar-active-bg: #ffffff;
+  --sidebar-active-text: #3b6cff;
+  --sidebar-active-shadow: 0 2px 12px rgba(59, 108, 255, 0.12);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.72);
+  --sidebar-border: #e2e8f0;
+  --sidebar-shadow: 2px 0 24px rgba(15, 23, 42, 0.04);
+  --sidebar-logo-bg: rgba(255, 255, 255, 0.92);
+  --sidebar-logo-text: #0f172a;
+  --sidebar-logo-accent: #3b6cff;
+
+  --navbar-bg: rgba(255, 255, 255, 0.72);
+  --navbar-text: #1e293b;
+  --navbar-border: #e2e8f0;
+  --navbar-sky-bg: #f4f4f4;
+  --navbar-sky-pattern:
+    linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  --navbar-sky-size: 24px 24px;
+
+  --text-color-primary: #0f172a;
+  --text-color-regular: #475569;
+  --text-color-secondary: #64748b;
+  --text-color-placeholder: #94a3b8;
+
+  --border-color-base: #cbd5e1;
+  --border-color-light: #e2e8f0;
+  --border-color-lighter: #f1f5f9;
+
+  --box-shadow-light: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --box-shadow-base: 0 4px 24px rgba(15, 23, 42, 0.08);
+
+  --login-bg: linear-gradient(145deg, #f8fafc 0%, #e0e7ff 45%, #f1f5f9 100%);
+  --login-card-bg: #ffffff;
+  --login-title-color: #3b6cff;
+
+  /* 主内容画布 / 卡片 — 工程格子纸背景 */
+  --content-bg: #f4f4f4;
+  --content-bg-pattern:
+    linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  --content-bg-size: 24px 24px;
+  --panel-bg: #ffffff;
+  --panel-border: #e2e8f0;
+  --panel-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+
+  --tags-bg: rgba(255, 255, 255, 0.65);
+  --tags-border: #e2e8f0;
+  --tags-item-bg: rgba(255, 255, 255, 0.85);
+
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+
+  /* 面包屑 */
+  --breadcrumb-link: #475569;
+  --breadcrumb-current: #64748b;
+  --breadcrumb-hover: var(--primary-color);
+
+  /* 圆角与间距 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --filter-bar-bg: #f8fafc;
+  --filter-border: #e8edf3;
+  --table-header-bg: #f1f5f9;
+  --table-row-hover: #f8fafc;
+
+  --sidebar-logo-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
+
+  /* 轻量覆盖 Element 主色（在默认 index.css 之后加载） */
+  --el-color-primary: #3b6cff;
+  --el-color-primary-light-3: #6d94ff;
+  --el-color-primary-light-5: #93b4ff;
+  --el-color-primary-light-7: #b9cffc;
+  --el-color-primary-light-9: #e8efff;
+  --el-color-primary-dark-2: #2f56cc;
+  --el-border-radius-base: 8px;
+  --el-border-radius-small: 6px;
+  --el-border-radius-round: 20px;
+  --el-box-shadow-light: 0 2px 12px rgba(15, 23, 42, 0.06);
+  --el-box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  --el-bg-color: #ffffff;
+  --el-bg-color-page: #f1f5f9;
+  --el-fill-color-light: #f8fafc;
+  --el-text-color-primary: #0f172a;
+  --el-text-color-regular: #475569;
+  --el-border-color: #e2e8f0;
+  --el-border-color-light: #f1f5f9;
+}
+
+/* ---------- 夜间：与 EP dark 中性色一致，略提亮主色 ---------- */
+:root.dark {
+  color-scheme: dark;
+
+  --primary-color: #60a5fa;
+  --primary-color-light: #93c5fd;
+  --primary-color-dark: #3b82f6;
+
+  --bg-color: #141414;
+  --bg-color-secondary: #1a1a1a;
+  --bg-color-tertiary: #242424;
+
+  --sidebar-bg: #0d1117;
+  --sidebar-bg-pattern:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  --sidebar-bg-size: 24px 24px;
+  --sidebar-text: #94a3b8;
+  --sidebar-active-bg: rgba(20, 20, 20, 0.92);
+  --sidebar-active-text: #93c5fd;
+  --sidebar-active-shadow: 0 2px 16px rgba(96, 165, 250, 0.18);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-shadow: 2px 0 28px rgba(0, 0, 0, 0.35);
+  --sidebar-logo-bg: rgba(20, 20, 20, 0.88);
+  --sidebar-logo-text: #e2e8f0;
+  --sidebar-logo-accent: #60a5fa;
+
+  --navbar-bg: rgba(15, 17, 23, 0.75);
+  --navbar-text: #e2e8f0;
+  --navbar-border: rgba(255, 255, 255, 0.06);
+  --navbar-sky-bg: #0d1117;
+  --navbar-sky-pattern:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  --navbar-sky-size: 24px 24px;
+
+  --text-color-primary: #e5eaf3;
+  --text-color-regular: #cbd5e1;
+  --text-color-secondary: #94a3b8;
+  --text-color-placeholder: #64748b;
+
+  --border-color-base: #3f3f46;
+  --border-color-light: #334155;
+  --border-color-lighter: #1e293b;
+
+  --box-shadow-light: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --box-shadow-base: 0 8px 32px rgba(0, 0, 0, 0.45);
+
+  --login-bg: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  --login-card-bg: #1e293b;
+  --login-title-color: #93c5fd;
+
+  --content-bg: #0d1117;
+  --content-bg-pattern:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  --content-bg-size: 24px 24px;
+  --panel-bg: #141414;
+  --panel-border: #2e2e2e;
+  --panel-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+  --tags-bg: rgba(15, 17, 23, 0.72);
+  --tags-border: rgba(255, 255, 255, 0.06);
+  --tags-item-bg: rgba(30, 30, 30, 0.85);
+
+  --scrollbar-thumb: #475569;
+  --scrollbar-thumb-hover: #64748b;
+
+  --breadcrumb-link: #94a3b8;
+  --breadcrumb-current: #cbd5e1;
+  --breadcrumb-hover: #93c5fd;
+
+  --filter-bar-bg: #1a1a1a;
+  --filter-border: #2e2e2e;
+  --table-header-bg: #1e293b;
+  --table-row-hover: #242424;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --sidebar-logo-gradient: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(13, 17, 23, 0.92) 100%);
+
+  --el-color-primary: #60a5fa;
+  --el-color-primary-light-3: #93c5fd;
+  --el-color-primary-light-5: #bfdbfe;
+  --el-color-primary-dark-2: #3b82f6;
+  --el-border-radius-base: 8px;
+  --el-box-shadow-light: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --el-bg-color-page: #0a0a0a;
+  --el-fill-color-light: #1a1a1a;
+  --el-text-color-primary: #e5eaf3;
+  --el-text-color-regular: #cbd5e1;
+  --el-border-color: #334155;
+}
+
+/* 侧栏菜单项悬停 / 激活（全局选择器，与 Sidebar 内 .sidebar-menu 配合） */
+.sidebar-menu .el-menu {
+  background-color: transparent !important;
+  border-right: none;
+  padding: 10px 0 20px;
+}
+
+.sidebar-menu .el-sub-menu .el-menu {
+  background-color: transparent !important;
+}
+
+.sidebar-menu .el-menu-item,
+.sidebar-menu .el-sub-menu__title {
+  position: relative;
+  border-radius: var(--radius-md);
+  margin: 3px 12px;
+  width: calc(100% - 24px) !important;
+  height: 44px;
+  line-height: 44px;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.sidebar-menu .el-sub-menu .el-menu-item {
+  height: 40px;
+  line-height: 40px;
+  padding-left: 52px !important;
+  margin: 2px 12px;
+}
+
+.sidebar-menu .el-menu-item:hover,
+.sidebar-menu .el-sub-menu__title:hover {
+  background-color: var(--sidebar-hover-bg) !important;
+}
+
+:root.light .sidebar-menu .el-menu-item:hover,
+:root.light .sidebar-menu .el-sub-menu__title:hover {
+  color: var(--text-color-primary) !important;
+}
+
+:root.dark .sidebar-menu .el-menu-item:hover,
+:root.dark .sidebar-menu .el-sub-menu__title:hover {
+  color: var(--sidebar-active-text) !important;
+}
+
+.sidebar-menu .el-sub-menu.is-active > .el-sub-menu__title {
+  color: var(--sidebar-active-text) !important;
+  font-weight: 600;
+}
+
+.sidebar-menu .el-menu-item.is-active {
+  background-color: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
+  border-left: none;
+  font-weight: 600;
+  box-shadow: var(--sidebar-active-shadow);
+}
+
+.sidebar-menu .el-menu-item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 0 4px 4px 0;
+  background: var(--primary-color);
+}
+
+.sidebar-menu .el-menu-item .el-icon,
+.sidebar-menu .el-sub-menu__title .el-icon {
+  font-size: 18px;
+  margin-right: 4px;
+  transition: color 0.25s ease;
+}
+
+.sidebar-menu .el-menu-item.is-active .el-icon {
+  color: var(--sidebar-active-text);
+}
+
+.sidebar-menu .el-sub-menu__icon-arrow {
+  color: var(--sidebar-text);
+  transition: color 0.25s ease;
+}
+
+.sidebar-menu .el-sub-menu.is-opened > .el-sub-menu__title .el-sub-menu__icon-arrow {
+  color: var(--sidebar-active-text);
+}

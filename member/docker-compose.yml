@@ -1,0 +1,84 @@
+name: mobi-app
+
+services:
+  nacos:
+    image: nacos/nacos-server:v3.2.3-slim
+    container_name: nacos
+    hostname: nacos
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    environment:
+      MODE: standalone
+      PREFER_HOST_MODE: ip
+      SPRING_DATASOURCE_PLATFORM: mysql
+      DB_NUM: 1
+      DB_URL_0: ${NACOS_DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      NACOS_AUTH_ENABLE: "true"
+      NACOS_AUTH_TOKEN: ${NACOS_AUTH_TOKEN}
+      NACOS_AUTH_IDENTITY_KEY: ${NACOS_AUTH_IDENTITY_KEY}
+      NACOS_AUTH_IDENTITY_VALUE: ${NACOS_AUTH_IDENTITY_VALUE}
+      JVM_XMS: 512m
+      JVM_XMX: 512m
+    volumes:
+      - nacos-conf:/home/nacos/conf
+      - nacos-logs:/home/nacos/logs
+      - nacos-data:/home/nacos/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - network
+
+  redis:
+    image: redis:8.4.5
+    container_name: redis
+    hostname: redis
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: >
+      sh -c "redis-server /usr/local/etc/redis/redis.conf --requirepass $$REDIS_PASSWORD"
+    networks:
+      - network
+
+  mongodb:
+    image: mongo:8.3.4
+    container_name: mobi-mongodb
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "27017:27017"
+    environment:
+      TZ: Asia/Shanghai
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: mobi_blog
+    volumes:
+      - mobi-mongodb-data:/data/db
+    networks:
+      - network
+
+networks:
+  network:
+    name: mobi-app_network
+    driver: bridge
+
+volumes:
+  nacos-conf:
+  nacos-logs:
+  nacos-data:
+  redis-data:
+  mobi-mongodb-data:

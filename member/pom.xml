@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+    </parent>
+
+    <groupId>com.xcz.member</groupId>
+    <artifactId>mobi</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>mobi-app</name>
+    <description>父模块</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>app-gateway</module>
+        <module>app-user</module>
+        <module>app-customer</module>
+        <module>app-notify</module>
+        <module>app-feign</module>
+    </modules>
+
+    <properties>
+        <!-- 默认跳过测试；需要跑测试时：mvn test -DskipTests=false -->
+        <skipTests>true</skipTests>
+        <java.version>21</java.version>
+        <commons.version>0.0.1-SNAPSHOT</commons.version>
+        <kaptcha.version>2.3.3</kaptcha.version>
+        <weixin.version>4.8.3.B</weixin.version>
+        <feign-form.version>13.6</feign-form.version>
+        <aliyun.ocr.version>3.1.2</aliyun.ocr.version>
+        <!-- 与 commons 中 redisson 版本保持一致，覆盖 SCA BOM 的 provided scope -->
+        <redisson.version>3.50.0</redisson.version>
+        <!-- WxJava 4.8.3+ 依赖 TlsSocketStrategy，需 HttpClient5 >= 5.4（Boot 3.2 默认 5.2.1） -->
+        <httpclient5.version>5.4.4</httpclient5.version>
+        <httpcore5.version>5.3.4</httpcore5.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2023.0.0.0-RC1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2023.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>wx-java-bom</artifactId>
+                <version>${weixin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- commons 外部模块：版本统一在此管理，子模块不写 version -->
+            <dependency>
+                <groupId>com.xcz.commons</groupId>
+                <artifactId>commons-core</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xcz.commons</groupId>
+                <artifactId>commons-log</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xcz.commons</groupId>
+                <artifactId>commons-oss</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xcz.commons</groupId>
+                <artifactId>commons-redis</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xcz.commons</groupId>
+                <artifactId>commons-security</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xcz.commons</groupId>
+                <artifactId>commons-database</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+
+            <!-- mobi 内部模块 -->
+            <dependency>
+                <groupId>com.xcz.member</groupId>
+                <artifactId>app-feign</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- mobi 业务特有依赖 -->
+            <dependency>
+                <groupId>pro.fessional</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-form-spring</artifactId>
+                <version>${feign-form.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>ocr_api20210707</artifactId>
+                <version>${aliyun.ocr.version}</version>
+            </dependency>
+            <!-- 覆盖 spring-cloud-alibaba BOM：redisson 3.23.3 provided → compile -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+            <!-- 覆盖 Spring Boot 3.2 默认的 httpclient5 5.2.1，满足 WxJava 小程序 SDK -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>

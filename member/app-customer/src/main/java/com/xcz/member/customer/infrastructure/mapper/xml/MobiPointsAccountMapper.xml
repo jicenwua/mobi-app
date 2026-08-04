@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.MobiPointsAccountMapper">
+
+  <!-- 店铺下用户积分账户列表 -->
+  <select id="selectShopPointsPage" resultType="com.xcz.member.customer.domain.vo.PointsAccountVO">
+    SELECT
+      pa.shop_id AS shopId,
+      pa.user_id AS userId,
+      s.shop_name AS shopName,
+      u.nickname AS nickname,
+      u.phone AS phone,
+      IFNULL(pa.base_points, 0) AS basePoints,
+      IFNULL(pa.bonus_points, 0) AS bonusPoints,
+      IFNULL(pa.base_points, 0) + IFNULL(pa.bonus_points, 0) AS remainingPoints,
+      IFNULL(pa.total_used_points, 0) AS totalUsedPoints,
+      pa.update_time AS updateTime
+    FROM mobi_points_account pa
+    INNER JOIN mobi_user u ON u.user_id = pa.user_id
+    INNER JOIN mobi_shop s ON s.id = pa.shop_id
+    <where>
+      <if test="query.shopId != null">
+        AND pa.shop_id = #{query.shopId}
+      </if>
+      <if test="query.userId != null">
+        AND pa.user_id = #{query.userId}
+      </if>
+      <if test="query.shopName != null and query.shopName != ''">
+        AND s.shop_name LIKE CONCAT('%', #{query.shopName}, '%')
+      </if>
+      <if test="query.keyword != null and query.keyword != ''">
+        <choose>
+          <when test="query.keywordSearchPhone != null and query.keywordSearchPhone">
+            AND (
+              u.phone LIKE CONCAT('%', #{query.keyword}, '%')
+              OR u.nickname LIKE CONCAT('%', #{query.keyword}, '%')
+            )
+          </when>
+          <otherwise>
+            AND u.nickname LIKE CONCAT('%', #{query.keyword}, '%')
+          </otherwise>
+        </choose>
+      </if>
+      <if test="(query.keyword == null or query.keyword == '') and query.nickname != null and query.nickname != ''">
+        AND u.nickname LIKE CONCAT('%', #{query.nickname}, '%')
+      </if>
+      <if test="(query.keyword == null or query.keyword == '') and query.phone != null and query.phone != ''">
+        AND u.phone LIKE CONCAT('%', #{query.phone}, '%')
+      </if>
+    </where>
+    <choose>
+      <when test="query.sortType != null and query.sortType == 2">
+        ORDER BY
+        <if test="query.keyword != null and query.keyword != '' and query.keywordSearchPhone != null and query.keywordSearchPhone">
+          CASE WHEN u.phone LIKE CONCAT('%', #{query.keyword}, '%') THEN 0 ELSE 1 END,
+        </if>
+        remainingPoints ASC, pa.update_time DESC
+      </when>
+      <when test="query.sortType != null and query.sortType == 3">
+        ORDER BY
+        <if test="query.keyword != null and query.keyword != '' and query.keywordSearchPhone != null and query.keywordSearchPhone">
+          CASE WHEN u.phone LIKE CONCAT('%', #{query.keyword}, '%') THEN 0 ELSE 1 END,
+        </if>
+        pa.total_used_points DESC, pa.update_time DESC
+      </when>
+      <when test="query.sortType != null and query.sortType == 4">
+        ORDER BY
+        <if test="query.keyword != null and query.keyword != '' and query.keywordSearchPhone != null and query.keywordSearchPhone">
+          CASE WHEN u.phone LIKE CONCAT('%', #{query.keyword}, '%') THEN 0 ELSE 1 END,
+        </if>
+        pa.total_used_points ASC, pa.update_time DESC
+      </when>
+      <otherwise>
+        ORDER BY
+        <if test="query.keyword != null and query.keyword != '' and query.keywordSearchPhone != null and query.keywordSearchPhone">
+          CASE WHEN u.phone LIKE CONCAT('%', #{query.keyword}, '%') THEN 0 ELSE 1 END,
+        </if>
+        remainingPoints DESC, pa.update_time DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <update id="deductPoints">
+    UPDATE mobi_points_account
+    SET base_points = base_points - #{deductBase},
+        bonus_points = bonus_points - #{deductBonus},
+        total_used_points = total_used_points + #{total},
+        update_time = NOW()
+    WHERE user_id = #{userId}
+      AND shop_id = #{shopId}
+      AND base_points + bonus_points &gt;= #{total}
+  </update>
+
+  <update id="refundPoints">
+    UPDATE mobi_points_account
+    SET base_points = base_points + #{refundBase},
+        bonus_points = bonus_points + #{refundBonus},
+        total_used_points = GREATEST(0, total_used_points - #{refundTotal}),
+        update_time = NOW()
+    WHERE user_id = #{userId}
+      AND shop_id = #{shopId}
+  </update>
+
+  <update id="adjustPoints">
+    UPDATE mobi_points_account
+    SET base_points = base_points + #{deltaBase},
+        bonus_points = bonus_points + #{deltaBonus},
+        update_time = NOW()
+    WHERE user_id = #{userId}
+      AND shop_id = #{shopId}
+      AND base_points + #{deltaBase} &gt;= 0
+      AND bonus_points + #{deltaBonus} &gt;= 0
+  </update>
+</mapper>

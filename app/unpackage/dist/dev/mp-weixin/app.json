@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/login/profile-setup",
+    "pages/main/main",
+    "pages/mine/profile",
+    "pages/mine/set-password",
+    "pages/mine/coupons",
+    "pages/mine/tickets",
+    "pages/mine/ticket-create",
+    "pages/mine/ticket-detail"
+  ],
+  "subPackages": [
+    {
+      "root": "pages/shop",
+      "pages": [
+        "add",
+        "detail",
+        "manage",
+        "product-detail",
+        "activity-edit",
+        "records",
+        "staff",
+        "statistics",
+        "scan-checkout"
+      ]
+    },
+    {
+      "root": "pages/member",
+      "pages": [
+        "shop-detail",
+        "purchase-confirm",
+        "purchase-success",
+        "order-detail",
+        "pay-qrcode"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "尚品发艺会员",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "preloadRule": {
+    "pages/main/main": {
+      "network": "all",
+      "packages": [
+        "pages/member",
+        "pages/shop"
+      ]
+    }
+  },
+  "__usePrivacyCheck__": true,
+  "usingComponents": {}
+}

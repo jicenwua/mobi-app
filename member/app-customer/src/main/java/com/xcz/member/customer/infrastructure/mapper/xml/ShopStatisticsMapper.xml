@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.ShopStatisticsMapper">
+
+    <sql id="shopIdIn">
+        <foreach collection="shopIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </sql>
+
+    <sql id="pointsUsedTimeExpr">
+        COALESCE(pl.consume_time, pl.create_time)
+    </sql>
+
+    <sql id="pointsUsedStatusFilter">
+        pl.status IN (1, 5, 7)
+    </sql>
+
+    <select id="countNewUsers" resultType="long">
+        SELECT COUNT(DISTINCT su.user_id)
+        FROM mobi_shop_user su
+        WHERE su.shop_id IN <include refid="shopIdIn"/>
+          AND su.role IN (3, 4)
+          AND su.create_time &gt;= #{startTime}
+          AND su.create_time &lt; #{endTime}
+    </select>
+
+    <select id="countOrders" resultType="long">
+        SELECT COUNT(*)
+        FROM mobi_points_log pl
+        WHERE pl.shop_id IN <include refid="shopIdIn"/>
+          AND pl.action_type = 2
+          AND pl.status IN (1, 5)
+          AND pl.create_time &gt;= #{startTime}
+          AND pl.create_time &lt; #{endTime}
+    </select>
+
+    <select id="sumPointsUsed" resultType="java.math.BigDecimal">
+        SELECT IFNULL(SUM(ABS(IFNULL(pl.change_base, 0)) + ABS(IFNULL(pl.change_bonus, 0))), 0)
+        FROM mobi_points_log pl
+        WHERE pl.shop_id IN <include refid="shopIdIn"/>
+          AND pl.action_type = 2
+          AND <include refid="pointsUsedStatusFilter"/>
+          AND <include refid="pointsUsedTimeExpr"/> &gt;= #{startTime}
+          AND <include refid="pointsUsedTimeExpr"/> &lt; #{endTime}
+    </select>
+
+    <select id="sumIncreasePointsByShop" resultType="com.xcz.member.customer.domain.vo.ShopIncreasePointsVO">
+        SELECT pl.shop_id AS shopId,
+               IFNULL(SUM(IFNULL(pl.change_base, 0) + IFNULL(pl.change_bonus, 0)), 0) AS increasePoints
+        FROM mobi_points_log pl
+        WHERE pl.shop_id IN <include refid="shopIdIn"/>
+          AND pl.action_type = 1
+          AND pl.create_time &gt;= #{startTime}
+          AND pl.create_time &lt; #{endTime}
+        GROUP BY pl.shop_id
+    </select>
+
+    <select id="groupNewUsersByDay" resultType="com.xcz.member.customer.domain.vo.ShopStatisticsDailyVO">
+        SELECT DATE(su.create_time) AS statDate,
+               COUNT(DISTINCT su.user_id) AS newUsers
+        FROM mobi_shop_user su
+        WHERE su.shop_id IN <include refid="shopIdIn"/>
+          AND su.role IN (3, 4)
+          AND su.create_time &gt;= #{startTime}
+          AND su.create_time &lt; #{endTime}
+        GROUP BY DATE(su.create_time)
+    </select>
+
+    <select id="groupOrdersByDay" resultType="com.xcz.member.customer.domain.vo.ShopStatisticsDailyVO">
+        SELECT DATE(pl.create_time) AS statDate,
+               COUNT(*) AS orders
+        FROM mobi_points_log pl
+        WHERE pl.shop_id IN <include refid="shopIdIn"/>
+          AND pl.action_type = 2
+          AND pl.status IN (1, 5)
+          AND pl.create_time &gt;= #{startTime}
+          AND pl.create_time &lt; #{endTime}
+        GROUP BY DATE(pl.create_time)
+    </select>
+
+    <select id="groupPointsUsedByDay" resultType="com.xcz.member.customer.domain.vo.ShopStatisticsDailyVO">
+        SELECT DATE(<include refid="pointsUsedTimeExpr"/>) AS statDate,
+               IFNULL(SUM(ABS(IFNULL(pl.change_base, 0)) + ABS(IFNULL(pl.change_bonus, 0))), 0) AS pointsUsed
+        FROM mobi_points_log pl
+        WHERE pl.shop_id IN <include refid="shopIdIn"/>
+          AND pl.action_type = 2
+          AND <include refid="pointsUsedStatusFilter"/>
+          AND <include refid="pointsUsedTimeExpr"/> &gt;= #{startTime}
+          AND <include refid="pointsUsedTimeExpr"/> &lt; #{endTime}
+        GROUP BY DATE(<include refid="pointsUsedTimeExpr"/>)
+    </select>
+
+    <select id="groupIncreasePointsByDay" resultType="com.xcz.member.customer.domain.vo.ShopStatisticsDailyVO">
+        SELECT DATE(pl.create_time) AS statDate,
+               IFNULL(SUM(IFNULL(pl.change_base, 0) + IFNULL(pl.change_bonus, 0)), 0) AS increasePoints
+        FROM mobi_points_log pl
+        WHERE pl.shop_id IN <include refid="shopIdIn"/>
+          AND pl.action_type = 1
+          AND pl.create_time &gt;= #{startTime}
+          AND pl.create_time &lt; #{endTime}
+        GROUP BY DATE(pl.create_time)
+    </select>
+</mapper>

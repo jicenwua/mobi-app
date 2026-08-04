@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "顾客信息",
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "segmented-tabs": "../../components/common/segmented-tabs"
+  }
+}

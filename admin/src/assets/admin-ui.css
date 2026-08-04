@@ -1,0 +1,236 @@
+/* ========================================
+   后台全局 UI — 仅样式，不改业务页面结构
+   作用于 .app-main 内列表页、公共组件与 EP 覆盖
+   ======================================== */
+
+/* ---------- 业务页容器（各页 .app-container） ---------- */
+.app-main .app-container,
+.app-main .dashboard-container {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--panel-shadow);
+  padding: 20px 24px;
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.app-main .app-container + .app-container {
+  margin-top: 16px;
+}
+
+/* 筛选表单区 */
+.app-main .app-container > .el-form.el-form--inline {
+  padding: 16px 18px 4px;
+  margin-bottom: 16px;
+  background: var(--filter-bar-bg);
+  border: 1px solid var(--filter-border);
+  border-radius: var(--radius-md);
+}
+
+.app-main .app-container > .el-form.el-form--inline .el-form-item {
+  margin-bottom: 12px;
+  margin-right: 16px;
+}
+
+.app-main .app-container > .el-form.el-form--inline .el-form-item__label {
+  color: var(--text-color-regular);
+  font-weight: 500;
+}
+
+/* 工具栏行（新增/删除等） */
+.app-main .app-container .mb8,
+.app-main .app-container > .el-row.mb8 {
+  margin-bottom: 14px !important;
+}
+
+.app-main .app-container .mb8 .el-button + .el-button,
+.app-main .app-container > .el-row.mb8 .el-button + .el-button {
+  margin-left: 10px;
+}
+
+/* ---------- 表格 ---------- */
+.app-main .app-container .el-table {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  --el-table-border-color: var(--panel-border);
+  --el-table-header-bg-color: var(--table-header-bg);
+  --el-table-row-hover-bg-color: var(--table-row-hover);
+  --el-table-bg-color: var(--panel-bg);
+  --el-table-tr-bg-color: var(--panel-bg);
+  --el-table-expanded-cell-bg-color: var(--bg-color-secondary);
+}
+
+.app-main .app-container .el-table th.el-table__cell {
+  background-color: var(--table-header-bg) !important;
+  color: var(--text-color-primary);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.app-main .app-container .el-table td.el-table__cell {
+  color: var(--text-color-regular);
+}
+
+.app-main .app-container .el-table--border .el-table__inner-wrapper::after,
+.app-main .app-container .el-table--border::before,
+.app-main .app-container .el-table--border .el-table__inner-wrapper::before {
+  background-color: var(--panel-border);
+}
+
+.app-main .app-container .el-table .el-button.is-link {
+  padding: 2px 6px;
+  font-weight: 500;
+}
+
+.app-main .app-container .table-row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.app-main .app-container .table-row-actions .el-button.is-link {
+  padding: 2px 6px;
+  height: auto;
+}
+
+/* ---------- 分页 ---------- */
+.app-main .pagination-container {
+  padding: 20px 8px 8px !important;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.app-main .pagination-container .el-pagination.is-background .el-pager li:not(.is-disabled).is-active {
+  background-color: var(--primary-color);
+}
+
+/* ---------- 卡片 / 描述 / 标签 ---------- */
+.app-main .el-card {
+  border-radius: var(--radius-lg);
+  border-color: var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  --el-card-bg-color: var(--panel-bg);
+}
+
+.app-main .el-card__header {
+  border-bottom-color: var(--panel-border);
+  font-weight: 600;
+  color: var(--text-color-primary);
+}
+
+.app-main .el-descriptions {
+  --el-descriptions-table-border: var(--panel-border);
+}
+
+.app-main .el-tag {
+  border-radius: 6px;
+}
+
+/* ---------- 弹窗 / 抽屉 ---------- */
+.el-dialog,
+.el-drawer {
+  border-radius: var(--radius-lg);
+}
+
+.el-dialog__header {
+  border-bottom: 1px solid var(--panel-border);
+  margin-right: 0;
+  padding-bottom: 14px;
+}
+
+.el-dialog__title {
+  font-weight: 600;
+  color: var(--text-color-primary);
+}
+
+.el-dialog__footer {
+  border-top: 1px solid var(--panel-border);
+  padding-top: 14px;
+}
+
+/* ---------- 按钮微动效 ---------- */
+.app-main .el-button {
+  border-radius: var(--radius-sm);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.app-main .el-button:not(.is-disabled):not(.is-link):active {
+  transform: scale(0.98);
+}
+
+/* 仅实心主按钮；plain / link 使用 Element 默认配色，避免文字与背景同色 */
+.app-main .el-button--primary:not(.is-plain):not(.is-link) {
+  --el-button-bg-color: var(--primary-color);
+  --el-button-border-color: var(--primary-color);
+  --el-button-text-color: #ffffff;
+  --el-button-hover-bg-color: var(--primary-color-light);
+  --el-button-hover-border-color: var(--primary-color-light);
+  --el-button-hover-text-color: #ffffff;
+}
+
+.app-main .el-button--primary.is-plain {
+  --el-button-text-color: var(--primary-color);
+  --el-button-bg-color: var(--el-color-primary-light-9);
+  --el-button-border-color: var(--el-color-primary-light-5);
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: var(--primary-color);
+  --el-button-hover-border-color: var(--primary-color);
+}
+
+/* ---------- 输入框 ---------- */
+.app-main .el-input__wrapper,
+.app-main .el-select__wrapper {
+  border-radius: var(--radius-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.app-main .el-input__wrapper.is-focus,
+.app-main .el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--primary-color) inset;
+}
+
+/* ---------- 首页仪表盘 ---------- */
+.app-main .dashboard-container .el-statistic__head {
+  color: var(--text-color-secondary);
+  font-size: 13px;
+}
+
+.app-main .dashboard-container .el-statistic__content {
+  color: var(--text-color-primary);
+  font-weight: 600;
+}
+
+.app-main .dashboard-container .el-col .el-statistic {
+  padding: 16px;
+  background: var(--filter-bar-bg);
+  border: 1px solid var(--filter-border);
+  border-radius: var(--radius-md);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.app-main .dashboard-container .el-col .el-statistic:hover {
+  box-shadow: var(--box-shadow-light);
+  transform: translateY(-2px);
+}
+
+/* ---------- 登录页（独立路由，仅视觉增强） ---------- */
+.login-container .login-form {
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--box-shadow-base);
+  backdrop-filter: blur(8px);
+}
+
+.login-container .login-btn {
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}

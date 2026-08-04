@@ -1,0 +1,243 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom",
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/login/profile-setup",
+			"style": {
+				"navigationBarTitleText": "完善资料",
+				"navigationStyle": "custom",
+				"backgroundColor": "#f5f5f5",
+				"backgroundColorContent": "#f5f5f5",
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/main/main",
+			"style": {
+				"navigationBarTitleText": "尚品发艺会员",
+				"navigationStyle": "custom",
+				"disableScroll": true
+			}
+		},
+		{
+			"path": "pages/mine/profile",
+			"style": {
+				"navigationBarTitleText": "个人资料",
+				"backgroundColor": "#f5f5f5",
+				"backgroundColorContent": "#f5f5f5",
+				"enablePullDownRefresh": false,
+				"disableScroll": true,
+				"animationType": "slide-in-right",
+				"animationDuration": 200
+			}
+		},
+		{
+			"path": "pages/mine/set-password",
+			"style": {
+				"navigationBarTitleText": "设置支付密码",
+				"animationType": "slide-in-right",
+				"animationDuration": 200
+			}
+		},
+		{
+			"path": "pages/mine/coupons",
+			"style": {
+				"navigationBarTitleText": "我的折扣券",
+				"backgroundColor": "#f5f5f5",
+				"backgroundColorContent": "#f5f5f5",
+				"animationType": "slide-in-right",
+				"animationDuration": 200
+			}
+		},
+		{
+			"path": "pages/mine/tickets",
+			"style": {
+				"navigationBarTitleText": "客服工单",
+				"backgroundColor": "#f5f5f5",
+				"backgroundColorContent": "#f5f5f5",
+				"animationType": "slide-in-right",
+				"animationDuration": 200
+			}
+		},
+		{
+			"path": "pages/mine/ticket-create",
+			"style": {
+				"navigationBarTitleText": "新建工单",
+				"backgroundColor": "#f5f5f5",
+				"backgroundColorContent": "#f5f5f5",
+				"animationType": "slide-in-right",
+				"animationDuration": 200
+			}
+		},
+		{
+			"path": "pages/mine/ticket-detail",
+			"style": {
+				"navigationBarTitleText": "工单详情",
+				"backgroundColor": "#f5f5f5",
+				"backgroundColorContent": "#f5f5f5",
+				"animationType": "slide-in-right",
+				"animationDuration": 200
+			}
+		}
+	],
+	"subPackages": [
+		{
+			"root": "pages/shop",
+			"pages": [
+				{
+					"path": "add",
+					"style": {
+						"navigationBarTitleText": "添加店铺",
+						"backgroundColor": "#f5f7fa",
+						"backgroundColorContent": "#f5f7fa",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "detail",
+					"style": {
+						"navigationBarTitleText": "店铺详情",
+						"backgroundColor": "#f5f5f5",
+						"backgroundColorContent": "#f5f5f5",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "manage",
+					"style": {
+						"navigationBarTitleText": "店铺管理",
+						"backgroundColor": "#f5f5f5",
+						"backgroundColorContent": "#f5f5f5",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "product-detail",
+					"style": {
+						"navigationBarTitleText": "商品详情",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "activity-edit",
+					"style": {
+						"navigationBarTitleText": "编辑活动",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "records",
+					"style": {
+						"navigationBarTitleText": "顾客信息",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "staff",
+					"style": {
+						"navigationBarTitleText": "店员管理",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "statistics",
+					"style": {
+						"navigationBarTitleText": "店铺统计",
+						"backgroundColor": "#f5f5f5",
+						"backgroundColorContent": "#f5f5f5",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "scan-checkout",
+					"style": {
+						"navigationBarTitleText": "扫码收银",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				}
+			]
+		},
+		{
+			"root": "pages/member",
+			"pages": [
+				{
+					"path": "shop-detail",
+					"style": {
+						"navigationBarTitleText": "店铺详情",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "purchase-confirm",
+					"style": {
+						"navigationBarTitleText": "确认订单",
+						"backgroundColor": "#f5f5f5",
+						"backgroundColorContent": "#f5f5f5",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "purchase-success",
+					"style": {
+						"navigationBarTitleText": "购买成功",
+						"backgroundColor": "#f5f5f5",
+						"backgroundColorContent": "#f5f5f5",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "order-detail",
+					"style": {
+						"navigationBarTitleText": "订单详情",
+						"backgroundColor": "#f5f5f5",
+						"backgroundColorContent": "#f5f5f5",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				},
+				{
+					"path": "pay-qrcode",
+					"style": {
+						"navigationBarTitleText": "付款码",
+						"animationType": "slide-in-right",
+						"animationDuration": 200
+					}
+				}
+			]
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "尚品发艺会员",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"app-plus": {
+			"background": "#efeff4"
+		}
+	},
+	"preloadRule": {
+		"pages/main/main": {
+			"network": "all",
+			"packages": ["pages/member", "pages/shop"]
+		}
+	}
+}

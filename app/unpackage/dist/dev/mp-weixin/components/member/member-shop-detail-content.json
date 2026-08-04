@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "shop-image-swiper": "../shop/shop-image-swiper",
+    "product-catalog": "../shop/product-catalog",
+    "member-shop-cart-bar": "./member-shop-cart-bar"
+  }
+}

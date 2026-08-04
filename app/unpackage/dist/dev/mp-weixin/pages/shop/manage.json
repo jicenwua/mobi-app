@@ -1,0 +1,18 @@
+{
+  "navigationBarTitleText": "店铺管理",
+  "backgroundColor": "#f5f5f5",
+  "backgroundColorContent": "#f5f5f5",
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {
+    "shop-image-swiper": "../../components/shop/shop-image-swiper",
+    "product-catalog": "../../components/shop/product-catalog",
+    "category-manage-sheet": "../../components/shop/category-manage-sheet",
+    "shop-manage-activity-list": "../../components/shop/shop-manage-activity-list",
+    "shop-manage-coupon-list": "../../components/shop/shop-manage-coupon-list",
+    "shop-manage-product-form": "../../components/shop/shop-manage-product-form",
+    "shop-manage-coupon-form": "../../components/shop/shop-manage-coupon-form",
+    "shop-manage-coupon-stock-sheet": "../../components/shop/shop-manage-coupon-stock-sheet",
+    "segmented-tabs": "../../components/common/segmented-tabs"
+  }
+}

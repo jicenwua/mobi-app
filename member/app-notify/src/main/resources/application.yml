@@ -1,0 +1,73 @@
+server:
+  port: 30003
+
+# 日志级别（输出见 logback-spring.xml：控制台着色 + ./log/{应用名}/ 按天归档，保留 3 天）
+logging:
+  level:
+    root: INFO
+    com.xcz.member: INFO
+
+spring:
+  application:
+    name: app-notify
+  config:
+    import:
+      - optional:file:../.env[.properties]
+      - optional:nacos:${spring.application.name}.yaml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_GROUP:MINI_APP_MOBI}
+        file-extension: yaml
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+
+#nacos中配置
+#notify:
+#  ws:
+#    allowed-origins:
+#      - http://localhost:*
+#      - https://localhost:*
+#      - http://127.0.0.1:*
+#      - https://127.0.0.1:*
+#    max-connections-per-user: 3
+#
+#
+#security:
+#  jwt:
+#    secret: ${JWT_SECRET}
+#    expiration: 86400000
+#  ignore:
+#    urls:
+#      - /notify/ws/**
+#    internal-service:
+#      token: ${INTERNAL_SERVICE_TOKEN}
+#    # 以下为默认值，一般不用改；/shop/sys/statistics 已在 /shop/sys/** 内
+#    inbound-auth-applications:
+#      - app-notify
+#    protected-paths:
+#      - /shop/sys/**
+#      - /mobi/user/sys/**
+#      - /mobi/role/**
+#      - /ticket/sys/**
+#      - /user-coupon/sys/**
+#      - /points/sys/**
+#      - /product/list
+#      - /product/status
+#
+#redis:
+#  enabled: true
+#  single:
+#    host: 127.0.0.1
+#    port: 6379
+#    password: ${REDIS_PASSWORD}
+#
+#log:
+#  request:
+#    enabled: true

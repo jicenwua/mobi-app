@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.MobiCouponTemplateMapper">
+
+    <update id="updateRemaining">
+        UPDATE mobi_coupon_template
+        SET issued_quantity = total_quantity - #{remaining}
+        WHERE template_id = #{templateId}
+          AND total_quantity IS NOT NULL
+    </update>
+</mapper>

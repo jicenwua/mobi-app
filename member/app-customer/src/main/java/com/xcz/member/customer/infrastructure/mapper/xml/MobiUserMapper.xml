@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.MobiUserMapper">
+    <insert id="insertWxUserRole">
+        INSERT INTO sys_user_role (user_id, role_id)
+        VALUES (#{userId}, 101)
+    </insert>
+
+    <insert id="insertWxUser" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO sys_user
+        ( open_id, nick_name, avatar, phonenumber, password, login_ip, login_date , create_time, update_time)
+        VALUES ( #{openid}, #{nickname}, #{avatarUrl}, #{phone}, #{password}, #{loginIp}, NOW() ,NOW(), #{updateTime})
+    </insert>
+    <update id="updateWxUser">
+        UPDATE  sys_user
+        SET
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="phone != null and phone != ''">
+                phonenumber = #{phone},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nick_name = #{nickname},
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                avatar = #{avatarUrl},
+            </if>
+            <if test="loginIp != null and loginIp != ''">
+                login_ip = #{loginIp},
+            </if>
+            login_date = NOW(),
+            update_time = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="selectUserRole" resultType="java.lang.String">
+        SELECT
+            IFNULL(sm.perms, '') as perms
+        FROM sys_user_role sur
+        left join  sys_role sr on sur.role_id = sr.role_id
+        left join sys_role_menu srm on sr.role_id = srm.role_id
+        left join sys_menu sm on srm.menu_id = sm.menu_id
+        WHERE user_id = #{userId}
+    </select>
+    <select id="selectByUserId" resultType="com.xcz.member.customer.infrastructure.entity.MobiUser">
+        SELECT
+            user_id, open_id, nick_name, avatar, phonenumber, password, status, login_ip, login_date, create_time, update_time
+        FROM sys_user
+        WHERE user_id = #{userId}
+            AND status = 0
+    </select>
+    <select id="selectByOpenid" resultType="com.xcz.member.customer.infrastructure.entity.MobiUser">
+        SELECT
+            user_id, open_id, nick_name, avatar, phonenumber, password, status, login_ip, login_date, create_time, update_time
+        FROM sys_user
+        WHERE open_id = #{openid}
+            AND status = 0
+    </select>
+    <select id="selectMobiuser" resultType="com.xcz.member.customer.infrastructure.entity.MobiUser">
+        SELECT
+            user_id, union_id, open_id, nick_name, avatar as avatarUrl, phonenumber, password, status, login_ip, login_date, create_time, update_time
+        FROM sys_user
+        <where>
+            status = 0
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phonenumber like concat('%', #{phone}, '%')
+            </if>
+            <if test="nickname != null and nickname != ''">
+                AND nick_name like concat('%', #{nickname}, '%')
+            </if>
+            <if test="openid != null and openid != ''">
+                AND open_id  = #{openid}
+            </if>
+            <if test="unionid != null and unionid != ''">
+                AND union_id  = #{unionid}
+            </if>
+        </where>
+    </select>
+</mapper>

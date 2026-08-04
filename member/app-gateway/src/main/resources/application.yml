@@ -1,0 +1,97 @@
+server:
+  port: 30000
+
+# 日志级别（输出见 logback-spring.xml：控制台着色 + ./log/{应用名}/ 按天归档，保留 3 天）
+logging:
+  level:
+    root: INFO
+    com.xcz.member: INFO
+
+spring:
+  application:
+    name: app-gateway
+  config:
+    import:
+      - optional:file:../.env[.properties]
+      - optional:nacos:${spring.application.name}.yaml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_GROUP:MINI_APP_MOBI}
+        file-extension: yaml
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD}
+
+#nacos中配置
+#spring:
+#  cloud:
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+#      routes:
+#        - id: mini-user
+#          uri: lb://app-admin
+#          predicates:
+#            - Path=/mobi/dashboard/**
+#          filters:
+#            - StripPrefix=2
+#        - id: app-notify-ws
+#          uri: lb:ws://app-notify
+#          predicates:
+#            - Path=/mobi/notify/ws,/mobi/notify/ws/**
+#          filters:
+#            - StripPrefix=1
+#        - id: mini-customer
+#          uri: lb://app-miniApp
+#          predicates:
+#            - Path=/mobi/**
+#          filters:
+#            - StripPrefix=1
+#        - id: mobi-blog
+#          uri: lb://mobi-blog
+#          predicates:
+#            - Path=/blog/**
+#          filters:
+#            - StripPrefix=1
+#
+#
+#redis:
+#  enabled: true
+#  single:
+#    client-name: "mini-client"
+#    host: 127.0.0.1
+#    port: 6379
+#    password: ${REDIS_PASSWORD}
+#
+#
+#gateway:
+#  captcha:
+#    enabled: true
+#    type: char
+#    expire-time: 60000
+#    paths:
+#      - /auth/login
+#  ratelimit:
+#    enabled: false
+#    permits-per-second: 10
+#    burst-limit: 10
+#    timeout: 86400000
+#  xss:
+#    enabled: true
+#  encryption:
+#    enabled: true
+#    rsaMode: true
+#    rsaPrivateKey: ${GATEWAY_RSA_PRIVATE_KEY}
+#    secretKey: ${GATEWAY_AES_SECRET_KEY}
+#    urls:
+#      - /code
+
+
+

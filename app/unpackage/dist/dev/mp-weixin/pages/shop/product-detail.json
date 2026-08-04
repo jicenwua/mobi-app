@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "商品详情",
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "product-edit-sheet": "../../components/shop/product-edit-sheet"
+  }
+}

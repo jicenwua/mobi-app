@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.user.mapper.SysUserMapper">
+
+    <resultMap id="SysUserResult" type="com.xcz.member.user.domain.SysUser">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <select id="selectUserByUserName" resultMap="SysUserResult">
+        SELECT * FROM sys_user WHERE user_name = #{userName} AND del_flag = 0
+    </select>
+
+    <select id="selectUserRoleIds" resultType="java.lang.Long">
+        SELECT role_id FROM sys_user_role WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectPageList" resultType="com.xcz.member.user.domain.vo.UserInfoVO">
+        SELECT
+            su.user_id AS userId,
+            su.user_name AS userName,
+            su.nick_name AS nickName,
+            su.email,
+            su.phonenumber,
+            su.open_id AS openId,
+            su.sex,
+            su.avatar,
+            su.status,
+            su.login_ip AS loginIp,
+            su.login_date AS loginDate,
+            su.create_time AS createTime,
+            GROUP_CONCAT(r.role_id SEPARATOR ',') AS roleIds,
+            GROUP_CONCAT(r.role_name SEPARATOR ',') AS roleName
+        FROM sys_user su
+        LEFT JOIN sys_user_role sur ON su.user_id = sur.user_id
+        LEFT JOIN sys_role r ON sur.role_id = r.role_id
+        WHERE su.del_flag = 0
+        <if test="dto.username != null and dto.username != ''">
+            AND su.user_name LIKE concat('%',#{dto.username},'%')
+        </if>
+        <if test="dto.nickname != null and dto.nickname != ''">
+            AND su.nick_name LIKE concat('%',#{dto.nickname},'%')
+        </if>
+        <if test="dto.status != null and dto.status != ''">
+            AND su.status = #{dto.status}
+        </if>
+        <if test="dto.phonenumber != null and dto.phonenumber != ''">
+            AND su.phonenumber LIKE concat('%',#{dto.phonenumber},'%')
+        </if>
+        <if test="dto.openId != null and dto.openId != ''">
+            AND su.open_id LIKE concat('%',#{dto.openId},'%')
+        </if>
+        <if test="dto.minLoginTime != null and dto.minLoginTime != ''">
+            AND su.login_date >= #{dto.minLoginTime}
+        </if>
+        <if test="dto.maxLoginTime != null and dto.maxLoginTime != ''">
+            AND su.login_date &lt;= #{dto.maxLoginTime}
+        </if>
+        <if test="dto.minCreateTime != null and dto.minCreateTime != ''">
+            AND su.create_time >= #{dto.minCreateTime}
+        </if>
+        <if test="dto.maxCreateTime != null and dto.maxCreateTime != ''">
+            AND su.create_time &lt;= #{dto.maxCreateTime}
+        </if>
+        GROUP BY su.user_id
+        ORDER BY
+        <if test="dto.orderByLoginTime != null and dto.orderByLoginTime == true">
+            su.login_date DESC,
+        </if>
+        <if test="dto.orderByLoginTime != null and dto.orderByLoginTime == false">
+            su.login_date ASC,
+        </if>
+        <if test="dto.orderByCreateTime != null and dto.orderByCreateTime == true">
+            su.create_time DESC,
+        </if>
+        <if test="dto.orderByCreateTime != null and dto.orderByCreateTime == false">
+            su.create_time ASC,
+        </if>
+        su.user_id DESC
+    </select>
+
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/member/app-customer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/app-feign/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/app-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/app-notify/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/app-user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-database/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-log/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-oss/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-redis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-security/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/commons-security/src/main/java/com/xcz/member/security/config/InternalServiceStartupValidator.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/member/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

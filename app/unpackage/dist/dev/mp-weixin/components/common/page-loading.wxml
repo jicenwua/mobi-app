@@ -1,0 +1,1 @@
+<view class="{{['page-loading', 'data-v-c3ec4776', d && 'page-loading--inline', e && 'page-loading--overlay', f && 'page-loading--compact']}}" style="{{g}}"><view class="page-loading__spinner data-v-c3ec4776" style="{{a}}"/><text wx:if="{{b}}" class="page-loading__text data-v-c3ec4776">{{c}}</text></view>

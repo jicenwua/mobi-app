@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xcz.member</groupId>
+        <artifactId>mobi</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>app-customer</artifactId>
+    <name>app-customer</name>
+    <description>app-customer</description>
+
+    <dependencies>
+        <!-- commons：oss 提供 web/starter，security 传递 redis/core，log 传递 core -->
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-database</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-log</artifactId>
+        </dependency>
+
+        <!-- mobi 内部 / 业务特有 -->
+        <dependency>
+            <groupId>com.xcz.member</groupId>
+            <artifactId>app-feign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>ocr_api20210707</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+        </dependency>
+        <!-- 显式引入，确保运行时 HttpClient5 >= 5.4（WxMaServiceHttpComponentsImpl 需要） -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-pay</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.8.38</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*Mapper.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

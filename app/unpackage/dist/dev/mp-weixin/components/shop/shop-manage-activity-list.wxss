@@ -1,0 +1,102 @@
+
+.list-card.data-v-f33728f9 {
+	border-top: 1px solid #f0f0f0;
+	padding: 12px 0;
+}
+.list-card.data-v-f33728f9:first-of-type {
+	border-top: none;
+	padding-top: 4px;
+}
+.row-main.data-v-f33728f9 {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 4px;
+}
+.row-name.data-v-f33728f9 {
+	font-size: 15px;
+	font-weight: 500;
+	color: #333;
+	flex: 1;
+	min-width: 0;
+}
+.row-tag.data-v-f33728f9 {
+	font-size: 12px;
+	color: #007aff;
+	margin-left: 8px;
+}
+.row-sub.data-v-f33728f9 {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+.row-meta.data-v-f33728f9 {
+	font-size: 12px;
+	color: #888;
+}
+.status-tag.data-v-f33728f9 {
+	flex-shrink: 0;
+	align-self: flex-start;
+	padding: 2px 8px;
+	border-radius: 10px;
+}
+.status-tag-text.data-v-f33728f9 {
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.4;
+}
+.status-tag--pending.data-v-f33728f9 {
+	background: rgba(0, 122, 255, 0.1);
+}
+.status-tag--pending .status-tag-text.data-v-f33728f9 {
+	color: #007aff;
+}
+.status-tag--active.data-v-f33728f9 {
+	background: rgba(52, 199, 89, 0.12);
+}
+.status-tag--active .status-tag-text.data-v-f33728f9 {
+	color: #34c759;
+}
+.status-tag--ended.data-v-f33728f9 {
+	background: #f0f0f0;
+}
+.status-tag--ended .status-tag-text.data-v-f33728f9 {
+	color: #999;
+}
+.status-tag--stopped.data-v-f33728f9 {
+	background: rgba(255, 149, 0, 0.12);
+}
+.status-tag--stopped .status-tag-text.data-v-f33728f9 {
+	color: #ff9500;
+}
+.status-tag--unknown.data-v-f33728f9 {
+	background: #f5f5f5;
+}
+.status-tag--unknown .status-tag-text.data-v-f33728f9 {
+	color: #bbb;
+}
+.row-actions.data-v-f33728f9 {
+	display: flex;
+	gap: 16px;
+}
+.action-btn.data-v-f33728f9 {
+	font-size: 13px;
+	color: #007aff;
+}
+.action-btn--danger.data-v-f33728f9 {
+	color: #e64340;
+}
+.action-btn--warn.data-v-f33728f9 {
+	color: #ff9500;
+}
+.action-btn--resume.data-v-f33728f9 {
+	color: #34c759;
+}
+.state-wrap--inline.data-v-f33728f9 {
+	padding: 20px 0;
+	text-align: center;
+}
+.state-text.data-v-f33728f9 {
+	font-size: 14px;
+	color: #999;
+}

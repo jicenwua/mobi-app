@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "订单详情",
+  "backgroundColor": "#f5f5f5",
+  "backgroundColorContent": "#f5f5f5",
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {
+    "qrcode-canvas": "../../components/common/qrcode-canvas",
+    "page-loading": "../../components/common/page-loading"
+  }
+}

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.MobiPointsLogMapper">
+
+    <!-- 店铺下积分变更流水列表 -->
+    <select id="selectShopLogPage" resultType="com.xcz.member.customer.domain.vo.PointsLogBriefVO">
+        SELECT
+            pl.log_id AS logId,
+            pl.shop_id AS shopId,
+            s.shop_name AS shopName,
+            pl.user_id AS userId,
+            u.nickname AS nickname,
+            u.phone AS phone,
+            pl.action_type AS actionType,
+            pl.pre_base_points AS preBasePoints,
+            pl.pre_bonus_points AS preBonusPoints,
+            pl.change_base AS changeBase,
+            pl.change_bonus AS changeBonus,
+            pl.after_base_points AS afterBasePoints,
+            pl.after_bonus_points AS afterBonusPoints,
+            pl.status AS status,
+            pl.remark AS remark,
+            pl.coupon_id AS couponId,
+            pl.create_time AS createTime,
+            pl.consume_time AS consumeTime,
+            (ABS(IFNULL(pl.change_base, 0)) + ABS(IFNULL(pl.change_bonus, 0))) AS consumePoints
+        FROM mobi_points_log pl
+        INNER JOIN mobi_user u ON u.user_id = pl.user_id
+        INNER JOIN mobi_shop s ON s.id = pl.shop_id
+        <where>
+            <if test="query.shopId != null">
+                AND pl.shop_id = #{query.shopId}
+            </if>
+            <if test="query.userId != null">
+                AND pl.user_id = #{query.userId}
+            </if>
+            <if test="query.shopName != null and query.shopName != ''">
+                AND s.shop_name LIKE CONCAT('%', #{query.shopName}, '%')
+            </if>
+            <if test="query.keyword != null and query.keyword != ''">
+                <choose>
+                    <when test="query.keywordSearchPhone != null and query.keywordSearchPhone">
+                        AND (
+                            u.phone LIKE CONCAT('%', #{query.keyword}, '%')
+                            OR u.nickname LIKE CONCAT('%', #{query.keyword}, '%')
+                        )
+                    </when>
+                    <otherwise>
+                        AND u.nickname LIKE CONCAT('%', #{query.keyword}, '%')
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(query.keyword == null or query.keyword == '') and query.nickname != null and query.nickname != ''">
+                AND u.nickname LIKE CONCAT('%', #{query.nickname}, '%')
+            </if>
+            <if test="(query.keyword == null or query.keyword == '') and query.phone != null and query.phone != ''">
+                AND u.phone LIKE CONCAT('%', #{query.phone}, '%')
+            </if>
+            <if test="query.actionType != null">
+                AND pl.action_type = #{query.actionType}
+            </if>
+            <if test="query.preBasePoints != null">
+                AND pl.pre_base_points = #{query.preBasePoints}
+            </if>
+            <if test="query.preBonusPoints != null">
+                AND pl.pre_bonus_points = #{query.preBonusPoints}
+            </if>
+            <if test="query.changeBase != null">
+                AND pl.change_base = #{query.changeBase}
+            </if>
+            <if test="query.changeBonus != null">
+                AND pl.change_bonus = #{query.changeBonus}
+            </if>
+            <if test="query.afterBasePoints != null">
+                AND pl.after_base_points = #{query.afterBasePoints}
+            </if>
+            <if test="query.afterBonusPoints != null">
+                AND pl.after_bonus_points = #{query.afterBonusPoints}
+            </if>
+            <if test="query.status != null">
+                AND pl.status = #{query.status}
+            </if>
+            <if test="query.excludeStatus != null">
+                AND pl.status != #{query.excludeStatus}
+            </if>
+        </where>
+        <choose>
+            <when test="query.keyword != null and query.keyword != '' and query.keywordSearchPhone != null and query.keywordSearchPhone">
+                ORDER BY CASE WHEN u.phone LIKE CONCAT('%', #{query.keyword}, '%') THEN 0 ELSE 1 END,
+                         pl.create_time DESC
+            </when>
+            <when test="query.keyword != null and query.keyword != ''">
+                ORDER BY pl.create_time DESC
+            </when>
+            <when test="query.sortType != null and query.sortType == 2">
+                ORDER BY (ABS(IFNULL(pl.change_base, 0)) + ABS(IFNULL(pl.change_bonus, 0))) DESC,
+                         pl.create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY pl.create_time DESC,
+                         (ABS(IFNULL(pl.change_base, 0)) + ABS(IFNULL(pl.change_bonus, 0))) DESC
+            </otherwise>
+        </choose>
+    </select>
+
+  <!-- 单条消费流水详情（含优惠券信息） -->
+  <select id="selectLogDetail" resultType="com.xcz.member.customer.domain.vo.PointsLogBriefVO">
+    SELECT
+      pl.log_id AS logId,
+      pl.shop_id AS shopId,
+      s.shop_name AS shopName,
+      pl.user_id AS userId,
+      u.nickname AS nickname,
+      u.phone AS phone,
+      pl.action_type AS actionType,
+      pl.pre_base_points AS preBasePoints,
+      pl.pre_bonus_points AS preBonusPoints,
+      pl.change_base AS changeBase,
+      pl.change_bonus AS changeBonus,
+      pl.after_base_points AS afterBasePoints,
+      pl.after_bonus_points AS afterBonusPoints,
+      pl.status AS status,
+      pl.remark AS remark,
+      pl.coupon_id AS couponId,
+      ct.coupon_name AS couponName,
+      ct.type AS couponType,
+      pl.create_time AS createTime,
+      pl.consume_time AS consumeTime,
+      (ABS(IFNULL(pl.change_base, 0)) + ABS(IFNULL(pl.change_bonus, 0))) AS consumePoints
+    FROM mobi_points_log pl
+    INNER JOIN mobi_user u ON u.user_id = pl.user_id
+    INNER JOIN mobi_shop s ON s.id = pl.shop_id
+    LEFT JOIN mobi_user_coupons uc ON uc.user_coupon_id = pl.coupon_id
+    LEFT JOIN mobi_coupon_template ct ON ct.template_id = COALESCE(uc.template_id, pl.coupon_id)
+    WHERE pl.log_id = #{logId}
+    LIMIT 1
+  </select>
+</mapper>

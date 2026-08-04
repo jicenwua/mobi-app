@@ -1,0 +1,29 @@
+{
+  "description": "uni-app 编译输出目录；微信开发者工具请直接导入本目录，miniprogramRoot 须为空",
+  "miniprogramRoot": "",
+  "compileType": "miniprogram",
+  "appid": "wx153a359332ca842b",
+  "projectname": "尚品发艺会员",
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "uglifyFileName": false,
+    "enhance": true,
+    "packNpmRelationList": [],
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useCompilerPlugins": false,
+    "minifyWXML": true,
+    "urlCheck": false
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
+}

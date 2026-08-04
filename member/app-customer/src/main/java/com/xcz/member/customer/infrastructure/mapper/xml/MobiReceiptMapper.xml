@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xcz.member.customer.infrastructure.mapper.MobiReceiptMapper">
+
+    <select id="selectItemsByLogIds" resultType="com.xcz.member.customer.domain.vo.PointsReceiptItemVO">
+        SELECT
+            r.receipt_id AS receiptId,
+            r.log_id AS logId,
+            r.product_name AS productName,
+            r.count AS count,
+            r.price AS price
+        FROM mobi_receipt r
+        WHERE r.log_id IN
+        <foreach collection="logIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY r.receipt_id ASC
+    </select>
+</mapper>

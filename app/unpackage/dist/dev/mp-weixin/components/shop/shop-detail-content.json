@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "shop-image-swiper": "./shop-image-swiper",
+    "qrcode-canvas": "../common/qrcode-canvas"
+  }
+}

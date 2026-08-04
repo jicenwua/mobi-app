@@ -1,0 +1,29 @@
+@import './base.css';
+@import './theme.css';
+@import './admin-ui.css';
+
+/* 移除旧的 #app 样式，已在 base.css 中定义 */
+
+/* 全局过渡动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 响应式设计 - 全局 */
+@media screen and (max-width: 1024px) {
+  /* 平板设备适配 */
+}
+
+@media screen and (max-width: 768px) {
+  /* 手机设备适配 */
+}
+
+@media screen and (max-width: 480px) {
+  /* 小屏手机适配 */
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xcz.member</groupId>
+        <artifactId>mobi</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>app-user</artifactId>
+    <name>app-user</name>
+    <description>app-user</description>
+
+    <dependencies>
+        <!-- commons：security 传递 redis/core/aop，log 传递 core/starter -->
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-database</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xcz.commons</groupId>
+            <artifactId>commons-log</artifactId>
+        </dependency>
+
+        <!-- mobi 内部：feign 传递 web/starter/openfeign/loadbalancer -->
+        <dependency>
+            <groupId>com.xcz.member</groupId>
+            <artifactId>app-feign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*Mapper.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "shop-image-swiper": "./shop-image-swiper",
+    "qrcode-canvas": "../common/qrcode-canvas"
+  }
+}

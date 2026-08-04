@@ -1,0 +1,1 @@
+<view class="segmented-tabs data-v-0601b7af"><view wx:for="{{a}}" wx:for-item="tab" wx:key="b" class="{{['segmented-tabs__item', 'data-v-0601b7af', tab.c && 'segmented-tabs__item--active']}}" bindtap="{{tab.d}}"><text class="segmented-tabs__text data-v-0601b7af">{{tab.a}}</text></view><view class="segmented-tabs__slider data-v-0601b7af" style="{{b}}"/></view>

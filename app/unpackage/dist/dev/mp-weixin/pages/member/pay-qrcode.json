@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "付款码",
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {
+    "qrcode-canvas": "../../components/common/qrcode-canvas",
+    "pay-pin-pad": "../../components/pay/pay-pin-pad"
+  }
+}

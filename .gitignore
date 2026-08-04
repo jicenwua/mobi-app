@@ -1,0 +1,7 @@
+/log/
+
+# 环境变量与本地密钥（勿提交）
+member/.env
+admin/.env.*.local
+.env
+.env.local
