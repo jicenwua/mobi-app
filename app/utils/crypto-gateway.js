@@ -29,6 +29,7 @@ patchCryptoJsRandom()
 export const HDR = {
 	ENCRYPTED_BODY: 'X-Encrypted-Body',
 	ENCRYPTED: 'X-Encrypted',
+	ENCRYPTED_KEY: 'X-Encrypted-Key',
 	IV: 'X-IV',
 	TIMESTAMP: 'X-Timestamp',
 	NONCE: 'X-Nonce',
@@ -97,6 +98,16 @@ function buildSignature(queryParams, timestamp, nonce, secretStr) {
 	return CryptoJS.SHA256(signSource).toString()
 }
 
+function createRsaSessionKey() {
+	const pem = toPemPublicKey(GATEWAY_RSA_PUBLIC_KEY_BASE64)
+	if (!pem) {
+		throw new Error('[crypto] 请在 config/env.js 配置 GATEWAY_RSA_PUBLIC_KEY_BASE64')
+	}
+	const sessionKey = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Base64)
+	const encryptedKey = rsaEncryptUtf8(sessionKey, pem)
+	return { sessionKey, encryptedKey }
+}
+
 /** 从完整 URL 解析 query 参数对象 */
 export function parseUrlQueryParams(fullUrl) {
 	try {
@@ -114,7 +125,36 @@ export function parseUrlQueryParams(fullUrl) {
 }
 
 /**
- * 将 POST/PUT JSON 转为网关可解密字符串；不加密时返回 null
+ * GET 请求协商会话密钥并附加加密相关请求头
+ * @returns {{ sessionKey: string, headers: Record<string, string> } | null}
+ */
+export function buildEncryptedGetHeaders(fullUrl, cryptoEnabled) {
+	if (!cryptoEnabled) return null
+
+	const mode = (GATEWAY_CRYPTO_MODE || 'rsa').toLowerCase()
+	const headers = { [HDR.ENCRYPTED_BODY]: 'true' }
+
+	if (mode === 'rsa') {
+		const { sessionKey, encryptedKey } = createRsaSessionKey()
+		headers[HDR.ENCRYPTED_KEY] = encryptedKey
+		return { sessionKey, headers }
+	}
+
+	if (mode === 'aes') {
+		const secret = String(GATEWAY_AES_SECRET_BASE64 || '').trim()
+		if (!secret) {
+			throw new Error('[crypto] AES 模式请配置 GATEWAY_AES_SECRET_BASE64')
+		}
+		Object.assign(headers, buildAesModeSecureHeaders(fullUrl))
+		return { sessionKey: secret, headers }
+	}
+
+	throw new Error(`[crypto] 不支持的 GATEWAY_CRYPTO_MODE: ${GATEWAY_CRYPTO_MODE}`)
+}
+
+/**
+ * 将 POST/PUT JSON 加密：密钥与 IV 走请求头，body 仅传密文。
+ * @returns {{ body: string, sessionKey: string, headers: Record<string, string> } | null}
  */
 export function buildEncryptedRequestBody(method, data, fullUrl, cryptoEnabled) {
 	const m = (method || 'GET').toUpperCase()
@@ -125,17 +165,19 @@ export function buildEncryptedRequestBody(method, data, fullUrl, cryptoEnabled) 
 		typeof data === 'string' ? data : JSON.stringify(data === '' ? {} : data)
 
 	const mode = (GATEWAY_CRYPTO_MODE || 'rsa').toLowerCase()
+	const ivB64 = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Base64)
 
 	if (mode === 'rsa') {
-		const pem = toPemPublicKey(GATEWAY_RSA_PUBLIC_KEY_BASE64)
-		if (!pem) {
-			throw new Error('[crypto] 请在 config/env.js 配置 GATEWAY_RSA_PUBLIC_KEY_BASE64')
+		const { sessionKey, encryptedKey } = createRsaSessionKey()
+		const payload = aesEncryptBase64(plain, sessionKey, ivB64)
+		return {
+			sessionKey,
+			body: payload,
+			headers: {
+				[HDR.ENCRYPTED_KEY]: encryptedKey,
+				[HDR.IV]: ivB64
+			}
 		}
-		const aesKeyB64 = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Base64)
-		const ivB64 = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Base64)
-		const payload = aesEncryptBase64(plain, aesKeyB64, ivB64)
-		const encryptedKey = rsaEncryptUtf8(aesKeyB64, pem)
-		return JSON.stringify({ encryptedKey, payload, iv: ivB64 })
 	}
 
 	if (mode === 'aes') {
@@ -143,9 +185,14 @@ export function buildEncryptedRequestBody(method, data, fullUrl, cryptoEnabled) 
 		if (!secret) {
 			throw new Error('[crypto] AES 模式请配置 GATEWAY_AES_SECRET_BASE64')
 		}
-		const ivB64 = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Base64)
 		const payload = aesEncryptBase64(plain, secret, ivB64)
-		return JSON.stringify({ payload, iv: ivB64 })
+		return {
+			sessionKey: secret,
+			body: payload,
+			headers: {
+				[HDR.IV]: ivB64
+			}
+		}
 	}
 
 	throw new Error(`[crypto] 不支持的 GATEWAY_CRYPTO_MODE: ${GATEWAY_CRYPTO_MODE}`)
@@ -165,41 +212,59 @@ export function buildAesModeSecureHeaders(fullUrl) {
 	}
 }
 
-/** 响应为加密包时解密为 JSON 对象 */
-export function maybeDecryptResponse(res) {
+function responseBodyLooksEncrypted(data, headersLower) {
+	const ivInHeader = headersLower[HDR.IV.toLowerCase()]
+	if (ivInHeader) return true
+	return data && typeof data === 'object' && data.payload != null && data.iv != null
+}
+
+/** 从响应 body 提取 AES 密文（兼容纯字符串与旧版 { payload, iv }） */
+function extractResponsePayload(data) {
+	if (data == null) return null
+	if (typeof data === 'string') {
+		const trimmed = data.trim()
+		if (!trimmed) return null
+		try {
+			const parsed = JSON.parse(trimmed)
+			if (typeof parsed === 'string') return parsed
+			if (parsed && parsed.payload != null) return String(parsed.payload)
+		} catch {
+			return trimmed
+		}
+	}
+	if (typeof data === 'object' && data.payload != null) {
+		return String(data.payload)
+	}
+	return null
+}
+
+/** 响应为加密包时解密为 JSON 对象（IV 优先从响应头 X-IV 读取） */
+export function maybeDecryptResponse(res, sessionKey) {
 	const headers = res.header || res.headers || {}
 	const lower = {}
 	for (const k of Object.keys(headers)) {
 		lower[String(k).toLowerCase()] = headers[k]
 	}
-	const enc = lower[HDR.ENCRYPTED.toLowerCase()]
-	if (!enc || String(enc).toLowerCase() !== 'true') {
+
+	const encHeader = lower[HDR.ENCRYPTED.toLowerCase()]
+	const isEncryptedHeader =
+		encHeader != null && String(encHeader).toLowerCase() === 'true'
+	if (!isEncryptedHeader && !responseBodyLooksEncrypted(res.data, lower)) {
 		return res
 	}
 
-	let data = res.data
-	if (typeof data === 'string') {
-		try {
-			data = JSON.parse(data)
-		} catch {
-			return res
-		}
-	}
-	if (!data || typeof data !== 'object') return res
+	const key = String(sessionKey || '').trim()
+	if (!key) return res
+
+	const iv =
+		lower[HDR.IV.toLowerCase()] ||
+		(typeof res.data === 'object' && res.data?.iv != null ? String(res.data.iv) : null)
+	const payload = extractResponsePayload(res.data)
+	if (!iv || !payload) return res
 
 	try {
-		if (data.encryptedKey != null && data.payload != null && data.iv != null) {
-			const jsonText = aesDecryptBase64(data.payload, String(data.encryptedKey), String(data.iv))
-			res.data = JSON.parse(jsonText)
-			return res
-		}
-		if (data.payload != null && data.iv != null) {
-			const secret = String(GATEWAY_AES_SECRET_BASE64 || '').trim()
-			if (!secret) return res
-			const jsonText = aesDecryptBase64(data.payload, secret, String(data.iv))
-			res.data = JSON.parse(jsonText)
-			return res
-		}
+		const jsonText = aesDecryptBase64(payload, key, String(iv))
+		res.data = JSON.parse(jsonText)
 	} catch {
 		/* 解密失败时保留原始 data */
 	}

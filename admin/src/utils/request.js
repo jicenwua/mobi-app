@@ -15,6 +15,9 @@ import {
 // 获取加密配置
 const encryptionConfig = getEncryptionConfig()
 
+/** 本次请求协商的 AES 会话密钥（响应解密复用） */
+const CRYPTO_SESSION_KEY = '__cryptoSessionKey'
+
 /**
  * 生成请求签名（纯 AES 模式需要）
  */
@@ -33,6 +36,33 @@ function generateSignature(params, timestamp, nonce, secret) {
 
   // 生成 SHA-256 签名
   return CryptoJS.SHA256(signSource).toString()
+}
+
+async function applyRsaSessionKey(config) {
+  const { JSEncrypt } = await import('jsencrypt')
+  const publicKey = import.meta.env.VITE_APP_ENCRYPTION_RSA_PUBLIC_KEY
+  const aesKey = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Base64)
+  const encrypt = new JSEncrypt()
+  encrypt.setPublicKey(publicKey)
+  const encryptedKey = encrypt.encrypt(aesKey)
+  config[CRYPTO_SESSION_KEY] = aesKey
+  config.headers['X-Encrypted-Key'] = encryptedKey
+  return aesKey
+}
+
+function applyAesSecureHeaders(config) {
+  const secretKey = encryptionConfig.secretKey
+  const timestamp = Date.now().toString()
+  const nonce = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex)
+  const params = {}
+  if (config.params) {
+    Object.assign(params, config.params)
+  }
+  const signature = generateSignature(params, timestamp, nonce, secretKey)
+  config.headers['X-Timestamp'] = timestamp
+  config.headers['X-Nonce'] = nonce
+  config.headers['X-Signature'] = signature
+  config[CRYPTO_SESSION_KEY] = secretKey
 }
 
 // 创建 axios 实例
@@ -62,63 +92,39 @@ service.interceptors.request.use(
       }
     }
 
-    // 如果开启了加密（multipart 表单不能加密）
-    if (encryptionConfig.enabled && config.data && !(config.data instanceof FormData) && ['POST', 'PUT'].includes(config.method?.toUpperCase())) {
-      // 判断是 RSA 模式还是纯 AES 模式
-      const isRsaMode = import.meta.env.VITE_APP_ENCRYPTION_RSA_MODE === 'true'
+    const method = config.method?.toUpperCase() || 'GET'
+    const isRsaMode = import.meta.env.VITE_APP_ENCRYPTION_RSA_MODE === 'true'
+    const canEncryptBody =
+      encryptionConfig.enabled &&
+      config.data &&
+      !(config.data instanceof FormData) &&
+      ['POST', 'PUT'].includes(method)
 
+    if (encryptionConfig.enabled && method === 'GET') {
+      config.headers['X-Encrypted-Body'] = 'true'
       if (isRsaMode) {
-        // RSA + AES 混合加密模式
-        const { JSEncrypt } = await import('jsencrypt')
-        const publicKey = import.meta.env.VITE_APP_ENCRYPTION_RSA_PUBLIC_KEY
+        await applyRsaSessionKey(config)
+      } else {
+        applyAesSecureHeaders(config)
+      }
+    }
 
-        // 生成随机 AES 密钥
-        const aesKey = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Base64)
+    if (canEncryptBody) {
+      if (isRsaMode) {
+        const aesKey = await applyRsaSessionKey(config)
         const iv = generateIv()
-
-        // RSA 加密 AES 密钥
-        const encrypt = new JSEncrypt()
-        encrypt.setPublicKey(publicKey)
-        const encryptedKey = encrypt.encrypt(aesKey)
-
-        // AES 加密请求体
         const jsonData = JSON.stringify(config.data)
         const encryptedPayload = aesEncrypt(jsonData, aesKey, iv)
-
-        // 发送格式：{encryptedKey, payload, iv}
-        config.data = JSON.stringify({
-          encryptedKey: encryptedKey,
-          payload: encryptedPayload,
-          iv: iv
-        })
+        config.headers['X-IV'] = iv
+        config.data = encryptedPayload
       } else {
-        // 纯 AES 加密模式（需要签名验证）
+        applyAesSecureHeaders(config)
         const secretKey = encryptionConfig.secretKey
-        const timestamp = Date.now().toString()
-        const nonce = CryptoJS.lib.WordArray.random(16).toString(CryptoJS.enc.Hex)
-
-        // 生成签名
-        const params = {}
-        if (config.params) {
-          Object.assign(params, config.params)
-        }
-        const signature = generateSignature(params, timestamp, nonce, secretKey)
-
-        // 添加签名请求头
-        config.headers['X-Timestamp'] = timestamp
-        config.headers['X-Nonce'] = nonce
-        config.headers['X-Signature'] = signature
-
-        // AES 加密请求体
         const jsonData = JSON.stringify(config.data)
         const iv = encryptionConfig.iv || generateIv()
         const encryptedPayload = aesEncrypt(jsonData, secretKey, iv)
-
-        // 发送格式：{payload, iv}
-        config.data = JSON.stringify({
-          payload: encryptedPayload,
-          iv: iv
-        })
+        config.headers['X-IV'] = iv
+        config.data = encryptedPayload
       }
 
       config.headers['X-Encrypted-Body'] = 'true'
@@ -155,23 +161,28 @@ service.interceptors.response.use(
   async response => {
     let res = response.data
 
-    // 解密响应体（网关响应头为 X-Encrypted，请求头为 X-Encrypted-Body）
-    if (encryptionConfig.enabled && response.headers['x-encrypted'] === 'true') {
+    // 解密响应体：IV 在响应头 X-IV，body 仅为密文
+    const sessionKey = response.config?.[CRYPTO_SESSION_KEY]
+    const iv = response.headers['x-iv'] || response.data?.iv
+    const looksEncrypted =
+      response.headers['x-encrypted'] === 'true' ||
+      (iv && typeof response.data === 'string') ||
+      (response.data?.payload && response.data?.iv)
+    if (encryptionConfig.enabled && looksEncrypted && sessionKey && iv) {
       try {
-        const isRsaMode = import.meta.env.VITE_APP_ENCRYPTION_RSA_MODE === 'true'
-
-        if (isRsaMode) {
-          // RSA 模式：响应中包含 encryptedKey
-          const { encryptedKey, payload, iv } = res
-          const aesKey = encryptedKey // 响应中的 AES 密钥是明文的
-          const decryptedJson = aesDecrypt(payload, aesKey, iv)
-          res = JSON.parse(decryptedJson)
-        } else {
-          // 纯 AES 模式：使用配置的密钥解密
-          const { payload, iv } = res
-          const decryptedJson = aesDecrypt(payload, encryptionConfig.secretKey, iv)
-          res = JSON.parse(decryptedJson)
+        let payload = response.data
+        if (typeof payload === 'string') {
+          try {
+            const parsed = JSON.parse(payload)
+            payload = typeof parsed === 'string' ? parsed : parsed?.payload
+          } catch {
+            /* 保持为纯密文字符串 */
+          }
+        } else if (payload?.payload) {
+          payload = payload.payload
         }
+        const decryptedJson = aesDecrypt(payload, sessionKey, iv)
+        res = JSON.parse(decryptedJson)
       } catch {
         ElMessage({
           message: '响应数据解密失败',

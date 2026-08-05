@@ -8,6 +8,7 @@ import {
 import {
 	getRequestCryptoEnabled,
 	buildEncryptedRequestBody,
+	buildEncryptedGetHeaders,
 	buildAesModeSecureHeaders,
 	maybeDecryptResponse,
 	HDR
@@ -79,22 +80,33 @@ function assertNotAdminGatewayUrl(urlStr) {
 	}
 }
 
-/** POST/PUT JSON 按需加密 */
+/** 按需协商会话密钥：GET 附加头；POST/PUT 加密 body */
 function applyRequestCrypto(merged) {
 	const cryptoOn = getRequestCryptoEnabled(REQUEST_CRYPTO_ENABLED)
 	if (!cryptoOn) return
 
 	const method = (merged.method || 'GET').toUpperCase()
+	merged.header = merged.header || {}
+
+	if (method === 'GET') {
+		const getCrypto = buildEncryptedGetHeaders(merged.url, true)
+		if (!getCrypto) return
+		Object.assign(merged.header, getCrypto.headers)
+		merged.__cryptoSessionKey = getCrypto.sessionKey
+		return
+	}
+
 	if (method !== 'POST' && method !== 'PUT') return
 	if (merged.data === undefined || merged.data === null) return
 
-	const encStr = buildEncryptedRequestBody(method, merged.data, merged.url, true)
-	if (!encStr) return
+	const enc = buildEncryptedRequestBody(method, merged.data, merged.url, true)
+	if (!enc) return
 
-	merged.data = encStr
-	merged.header = merged.header || {}
+	merged.data = enc.body
+	merged.__cryptoSessionKey = enc.sessionKey
 	merged.header['content-type'] = 'application/json'
 	merged.header[HDR.ENCRYPTED_BODY] = 'true'
+	Object.assign(merged.header, enc.headers)
 	if (String(GATEWAY_CRYPTO_MODE || 'rsa').toLowerCase() === 'aes') {
 		Object.assign(merged.header, buildAesModeSecureHeaders(merged.url))
 	}
@@ -158,7 +170,7 @@ function executeRequest(options, retried401) {
 				uni.request({
 					...merged,
 					success(res) {
-						maybeDecryptResponse(res)
+						maybeDecryptResponse(res, merged.__cryptoSessionKey)
 						resolve(res)
 					},
 					fail: reject

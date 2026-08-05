@@ -4,9 +4,9 @@ const api_constants_customer = require("../constants/customer.js");
 require("../../common/vendor.js");
 const utils_apiResponse = require("../../utils/api-response.js");
 const api_modules_authToken = require("./auth-token.js");
-const utils_cryptoGateway = require("../../utils/crypto-gateway.js");
 const utils_multipartUpload = require("../../utils/multipart-upload.js");
 const utils_fileTemp = require("../../utils/file-temp.js");
+const utils_cryptoGateway = require("../../utils/crypto-gateway.js");
 const utils_productStatus = require("../../utils/product-status.js");
 function parseData(res) {
   const body = utils_apiResponse.unwrapResponseBody(res.data);

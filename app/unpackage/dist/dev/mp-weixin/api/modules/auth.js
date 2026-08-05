@@ -5,7 +5,6 @@ const api_constants_customer = require("../constants/customer.js");
 const utils_apiResponse = require("../../utils/api-response.js");
 const utils_avatar = require("../../utils/avatar.js");
 const api_modules_authToken = require("./auth-token.js");
-const utils_cryptoGateway = require("../../utils/crypto-gateway.js");
 const services_notifySocket = require("../../services/notify-socket.js");
 const utils_permissions = require("../../utils/permissions.js");
 const services_userSecurity = require("../../services/user-security.js");
@@ -107,7 +106,6 @@ function wxLogin({ phoneCode } = {}) {
         data,
         timeout: 6e4,
         success: (res) => {
-          utils_cryptoGateway.maybeDecryptResponse(res);
           const body = utils_apiResponse.unwrapResponseBody(res.data);
           const ok = res.statusCode === 200 && utils_apiResponse.isApiSuccess(body);
           const login = utils_apiResponse.parseLoginData(utils_apiResponse.pickApiData(body));

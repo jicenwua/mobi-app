@@ -19,7 +19,6 @@ import {
 	setSessionPermissions,
 	applyServerSetPasswordFlag
 } from '@/api/modules/auth-token.js'
-import { maybeDecryptResponse } from '@/utils/crypto-gateway.js'
 import { disconnectNotifySocket } from '@/services/notify-socket.js'
 
 export { getToken, setToken, clearAuthSession }
@@ -139,7 +138,6 @@ export function wxLogin({ phoneCode } = {}) {
 				data,
 				timeout: 60000,
 				success: (res) => {
-					maybeDecryptResponse(res)
 					const body = unwrapResponseBody(res.data)
 					const ok = res.statusCode === 200 && isApiSuccess(body)
 					const login = parseLoginData(pickApiData(body))
