@@ -1,13 +1,12 @@
 package com.xcz.member.gateway.filter;
 
 import com.alibaba.nacos.api.config.annotation.NacosConfigListener;
-import com.xcz.commons.core.constant.SecurityConstants;
 import com.xcz.commons.core.utils.ServletUtils;
 import com.xcz.commons.core.utils.StringUtils;
-import com.xcz.member.gateway.config.properties.BlackRequestProperties;
-import com.xcz.member.gateway.config.properties.RateLimiterProperties;
 import com.xcz.commons.redis.extend.DatabaseEnum;
 import com.xcz.commons.redis.utils.RedisUtil;
+import com.xcz.member.gateway.config.properties.BlackRequestProperties;
+import com.xcz.member.gateway.config.properties.RateLimiterProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 路由过滤拦截器
+ * 路由过滤拦截器，使用redis进行全局的拦截，防止黑名单只在本网关生效
  */
 @Slf4j
 @Component
@@ -50,19 +49,26 @@ public class RateLimiterFilter implements GlobalFilter {
     @PostConstruct
     public void init(){
         refresh();
+        //监听其他服务出现的名单
         RTopic topic = redisson.getTopic(RATE_LIMITER_TOPIC);
         topic.addListener(String.class,new BlackIpListener());
     }
 
+    /**
+     * 监听使用的nacos配置文件，当配置文件进行修改的时候，进行刷新黑名单数据
+     */
     @NacosConfigListener(
             dataId = "${spring.application.name}.${spring.cloud.nacos.config.file-extension:yaml}",
             groupId = "${spring.cloud.nacos.config.group:DEFAULT_GROUP}"
     )
     public void refresh(){
-        if(blackRequestProperties.getIps() != null && !blackRequestProperties.getIps().isEmpty()){
-            blackIpList.clear();
+        blackIpList.clear();
+        if (blackRequestProperties.getIps() != null) {
             blackIpList.addAll(blackRequestProperties.getIps());
-            blackIpList.addAll(redisson.getList(RATE_LIMITER_BLACK));
+        }
+        RSet<String> redisBlackSet = redisson.getSet(RATE_LIMITER_BLACK);
+        if (!redisBlackSet.isEmpty()) {
+            blackIpList.addAll(redisBlackSet.readAll());
         }
     }
 
@@ -71,23 +77,26 @@ public class RateLimiterFilter implements GlobalFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        //进行黑名单拦截
-        boolean isBlack = isBlackList(request);
-        if(isBlack){
+        String path = request.getURI().getPath();
+        String ip = getIPAddress(request);
+
+        if (isWhiteList(path, ip)) {
+            return chain.filter(exchange);
+        }
+        if (isBlackList(path, ip)) {
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.FORBIDDEN);
             return ServletUtils.webFluxResponseWriter(response, "请求地址不允许");
         }
-        if(!rateLimiterProperties.isEnabled()){
+        if (!rateLimiterProperties.isEnabled()) {
             return chain.filter(exchange);
         }
-        //根据请求IP进行限流
-        String ip = getIPAddress(request);
         RRateLimiterReactive rateLimiter = redisson.reactive().getRateLimiter(RATE_LIMITER_KEY + ip);
-        return rateLimiter.trySetRate(RateType.OVERALL, rateLimiterProperties.getPermitsPerSecond(), Duration.ofSeconds(1))
-                .flatMap(setResult -> rateLimiter.expire(Duration.ofHours(1))) // 设置过期时间
+        return rateLimiter.trySetRate(RateType.OVERALL, rateLimiterProperties.getPermitsPerSecond(), Duration.ofSeconds(1)) //计算每秒的最大请求
+                .flatMap(setResult -> rateLimiter.expire(Duration.ofHours(1))) // 一小时没有请求，则删除该ip令牌桶
                 .then(rateLimiter.tryAcquire()) // 尝试获取令牌
                 .flatMap(allowed -> {
+                    //获取成功放行，失败则进行限流处理
                     if (allowed) {
                         return chain.filter(exchange);
                     } else {
@@ -114,8 +123,8 @@ public class RateLimiterFilter implements GlobalFilter {
                         return expireMono
                                 .then(atomicLong.delete()) // 删除计数器
                                 .then(redisson.reactive().getSet(RATE_LIMITER_BLACK).add(ip)) // 放入 Redis 黑名单
-                                .then(Mono.fromRunnable(() -> blackIpList.add(ip)))
-                                .then(exchange.getResponse().setComplete()); // 更新本地缓存
+                                .then(Mono.fromRunnable(() ->redisson.getTopic(RATE_LIMITER_TOPIC).publish("ADD:" + ip)))
+                                .then(exchange.getResponse().setComplete()); // 结束 429 响应。
                     }
 
                     return expireMono.then(exchange.getResponse().setComplete());
@@ -125,26 +134,33 @@ public class RateLimiterFilter implements GlobalFilter {
 
     /**
      * 黑名单拦截
-     * @param request   请求
-     * @return  是否处于黑名单
+     *
+     * @param path 请求路径
+     * @param ip   客户端 IP
+     * @return 是否处于黑名单
      */
-    private boolean isBlackList(ServerHttpRequest request) {
+    private boolean isBlackList(String path, String ip) {
         List<String> urls = blackRequestProperties.getUrls();
-        //判断是否黑名单url
-        if(urls != null && !urls.isEmpty()){
-            String url = request.getURI().getPath();
-            if (StringUtils.matches(url, urls)){
-                //如果是内部请求则不拦截，否则进行拦截
-                String fromSource = request.getHeaders().getFirst(SecurityConstants.FROM_SOURCE);
-                if(!SecurityConstants.INNER.equalsIgnoreCase(fromSource)){
-                    return true;
-                }
-            }
+        if (urls != null && !urls.isEmpty()) {
+            return StringUtils.matches(path, urls);
         }
-        //判断是否黑名单ip
-        if(!blackIpList.isEmpty()){
-            String ip = getIPAddress(request);
+        if (!blackIpList.isEmpty()) {
             return StringUtils.matches(ip, blackIpList);
+        }
+        return false;
+    }
+
+    /**
+     * 检查是否白名单
+     *
+     * @param path 请求路径
+     * @param ip   客户端 IP
+     * @return 是否白名单
+     */
+    private boolean isWhiteList(String path, String ip) {
+        List<String> whitelist = blackRequestProperties.getWhitelist();
+        if (whitelist != null && !whitelist.isEmpty()) {
+            return StringUtils.matches(ip, whitelist) || StringUtils.matches(path, whitelist);
         }
         return false;
     }

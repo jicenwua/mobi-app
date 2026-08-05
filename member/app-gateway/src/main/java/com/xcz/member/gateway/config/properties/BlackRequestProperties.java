@@ -16,4 +16,6 @@ public class BlackRequestProperties {
     private List<String> urls = null;
     /***黑名单ip**/
     private List<String> ips = null;
+    /***白名单地址或者ip**/
+    private List<String> whitelist = null;
 }

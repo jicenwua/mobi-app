@@ -29,19 +29,26 @@ public class GatewayConfig {
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);
         config.setAllowCredentials(true);
+        //设置响应头读取，未设置的前端读取不到数据
         config.addExposedHeader("authorization");
         config.addExposedHeader("Authorization");
         config.addExposedHeader("role_permission");
         config.addExposedHeader("Role-Permission");
         config.addExposedHeader("X-Encrypted");
         config.addExposedHeader("X-IV");
+        config.addExposedHeader("X-Encrypted-Key");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsWebFilter(source);
     }
+
+
     @Resource
     private CaptchaHandler captchaHandler;
 
+    /**
+     * 创建验证码拦截bean
+     */
     @Bean
     public RouterFunction<ServerResponse> routerFunction(){
         return RouterFunctions
