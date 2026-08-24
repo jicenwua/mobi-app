@@ -5,7 +5,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -20,7 +19,6 @@ public class CacheRequestFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
 
         //检查请求方法，GET 和 DELETE 通常没有请求体，不需要缓存，直接放行
         HttpMethod method = exchange.getRequest().getMethod();
@@ -28,7 +26,7 @@ public class CacheRequestFilter implements GlobalFilter {
             return chain.filter(exchange);
         }
 
-        // ⭐ 添加：跳过 multipart/form-data 请求（文件上传）
+        //跳过 multipart/form-data 请求（文件上传）
         String contentType = exchange.getRequest().getHeaders().getFirst("Content-Type");
         if (contentType != null && contentType.toLowerCase().contains("multipart/form-data")) {
             // 文件上传请求不缓存，直接放行

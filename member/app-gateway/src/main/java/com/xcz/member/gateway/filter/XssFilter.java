@@ -82,6 +82,7 @@ public class XssFilter implements GlobalFilter {
             @Override
             public Flux<DataBuffer> getBody() {
                 return super.getBody().handle((dataBuffer, sink) -> {
+                    //读取当前分片数据冬奥字节数组并释放分片
                     byte[] content = new byte[dataBuffer.readableByteCount()];
                     dataBuffer.read(content);
                     DataBufferUtils.release(dataBuffer);

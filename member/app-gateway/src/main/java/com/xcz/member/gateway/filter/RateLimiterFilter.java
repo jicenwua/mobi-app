@@ -37,14 +37,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RateLimiterFilter implements GlobalFilter {
 
     private final RedissonClient redisson = RedisUtil.getRedisson(DatabaseEnum.DATABASE_0);
-    private static final String RATE_LIMITER_BLACK = "rate_limiter:black:";
-    private static final String RATE_LIMITER_COUNT = "rate_limiter:count:";
-    private static final String RATE_LIMITER_KEY = "rate_limiter:limiter:";
-    private static final String RATE_LIMITER_TOPIC = "rate_limiter:topic";
+    private static final String RATE_LIMITER_BLACK = "rate_limiter:black:"; //黑名单缓存
+    private static final String RATE_LIMITER_COUNT = "rate_limiter:count:"; //触发限制数缓存
+    private static final String RATE_LIMITER_KEY = "rate_limiter:limiter:"; //ip角度的令牌桶
+    private static final String RATE_LIMITER_TOPIC = "rate_limiter:topic";  //新增黑名单订阅
 
     private final RateLimiterProperties rateLimiterProperties;
     private final BlackRequestProperties blackRequestProperties;
-    private final List<String> blackIpList= new CopyOnWriteArrayList<>();
+    private final List<String> blackIpList= new CopyOnWriteArrayList<>(); //请求ip黑名单
 
     @PostConstruct
     public void init(){
@@ -79,15 +79,17 @@ public class RateLimiterFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
         String ip = getIPAddress(request);
-
+        //检查是否白名单
         if (isWhiteList(path, ip)) {
             return chain.filter(exchange);
         }
+        //检查是否黑名单
         if (isBlackList(path, ip)) {
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.FORBIDDEN);
             return ServletUtils.webFluxResponseWriter(response, "请求地址不允许");
         }
+        //是否进行限流
         if (!rateLimiterProperties.isEnabled()) {
             return chain.filter(exchange);
         }

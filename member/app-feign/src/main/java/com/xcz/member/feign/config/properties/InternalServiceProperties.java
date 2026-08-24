@@ -6,6 +6,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 import java.util.List;
 
+/**
+ * 需要进行安全校验的远程请求
+ */
 @Data
 @RefreshScope
 @ConfigurationProperties(prefix = "security.internal-service")

@@ -16,6 +16,12 @@ import reactor.core.publisher.Mono;
 @Order(-950)
 public class HeaderSanitizeFilter implements GlobalFilter {
 
+    /**
+     * 接收请求的时候，删除请求的时候携带的危险请求头
+     * @param exchange the current server exchange
+     * @param chain provides a way to delegate to the next filter
+     * @return
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest().mutate()
