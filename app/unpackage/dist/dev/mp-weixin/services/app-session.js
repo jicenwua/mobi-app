@@ -1,6 +1,7 @@
 "use strict";
 const api_modules_auth = require("../api/modules/auth.js");
 const services_authRelogin = require("./auth-relogin.js");
+const services_notifySocket = require("./notify-socket.js");
 const services_userProfile = require("./user-profile.js");
 const services_userSecurity = require("./user-security.js");
 const api_modules_authToken = require("../api/modules/auth-token.js");
@@ -43,13 +44,19 @@ async function restoreSessionFromToken() {
       needLogin: false
     };
   }
+  api_modules_authToken.clearAuthSession();
+  services_notifySocket.disconnectNotifySocket();
+  if (info.serverError) {
+    return {
+      loginResult: { ok: false, msg: info.msg || "服务暂不可用，请稍后重试" },
+      needLogin: true,
+      serverError: true
+    };
+  }
   if (info.unauthorized) {
     return null;
   }
-  return {
-    loginResult: { ok: false, msg: info.msg || "获取用户信息失败" },
-    needLogin: true
-  };
+  return null;
 }
 async function runBootstrap() {
   var _a;
@@ -58,6 +65,12 @@ async function runBootstrap() {
     const restored = await restoreSessionFromToken();
     if ((_a = restored == null ? void 0 : restored.loginResult) == null ? void 0 : _a.ok) {
       return restored;
+    }
+    if (restored == null ? void 0 : restored.serverError) {
+      return {
+        loginResult: restored.loginResult,
+        needLogin: true
+      };
     }
   }
   const autoResult = await services_authRelogin.performAutoLogin();

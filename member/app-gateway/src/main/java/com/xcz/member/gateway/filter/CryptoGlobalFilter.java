@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xcz.commons.core.constant.SecurityHeaderConstants;
 import com.xcz.commons.core.utils.CryptoUtils;
 import com.xcz.commons.core.utils.RequestSignatureUtils;
+import com.xcz.commons.core.utils.StringUtils;
 import com.xcz.member.gateway.config.properties.EncryptionProperties;
 import jakarta.annotation.Resource;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -25,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +58,14 @@ public class CryptoGlobalFilter implements GlobalFilter {
         if (isFileOperation(request)) {
             return chain.filter(exchange);
         }
+
+        //判断是否跳过的验证
+        List<String> urls = encryptionProperties.getUrls();
+        String path = request.getURI().getPath();
+        if(!urls.isEmpty() && StringUtils.matches(path, urls)) {
+            return chain.filter(exchange);
+        }
+
 
         //获取前端是否进行加密
         String encryptedBodyHeader = request.getHeaders().getFirst(SecurityHeaderConstants.ENCRYPTED_BODY);
@@ -91,7 +101,7 @@ public class CryptoGlobalFilter implements GlobalFilter {
      */
     private Mono<Void> handleGetSessionKey(ServerWebExchange exchange, ServerHttpRequest request, GatewayFilterChain chain) {
         try {
-            String secretKey = encryptionProperties.getSecretKey();
+            String secretKey = encryptionProperties.getDecryptionKey();
             if (secretKey == null || secretKey.isEmpty()) {
                 exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
                 return exchange.getResponse().setComplete();
@@ -130,7 +140,7 @@ public class CryptoGlobalFilter implements GlobalFilter {
      */
     private Mono<Void> handleRsaAesMode(ServerWebExchange exchange, ServerHttpRequest request, GatewayFilterChain chain) {
         try {
-            String rsaPrivateKey = encryptionProperties.getSecretKey();
+            String rsaPrivateKey = encryptionProperties.getDecryptionKey();
             if (rsaPrivateKey == null || rsaPrivateKey.isEmpty()) {
                 exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
                 return exchange.getResponse().setComplete();

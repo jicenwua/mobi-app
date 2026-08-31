@@ -8,7 +8,7 @@
 			<text class="privacy-title">用户隐私保护提示</text>
 			<view class="privacy-body">
 				<text class="privacy-text">
-					感谢使用尚品发艺会员。在使用本小程序服务前，请您仔细阅读并充分理解
+					感谢使用尚品发艺会员助手。在使用本小程序服务前，请您仔细阅读并充分理解
 				</text>
 				<text class="privacy-link" @click="openPrivacyContract">{{ contractLabel }}</text>
 				<text class="privacy-text">

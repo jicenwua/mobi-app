@@ -28,6 +28,12 @@ export function isUnauthorizedResponse(res, body) {
 	return res?.statusCode === 401 || body?.code === 401
 }
 
+/** HTTP 5xx 服务端异常（如网关解密失败） */
+export function isServerErrorResponse(res) {
+	const code = Number(res?.statusCode)
+	return code >= 500 && code < 600
+}
+
 /** 取业务 data 载荷 */
 export function pickApiData(body) {
 	return body?.data

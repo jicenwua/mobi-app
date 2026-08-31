@@ -21,6 +21,10 @@ function isApiSuccess(body) {
 function isUnauthorizedResponse(res, body) {
   return (res == null ? void 0 : res.statusCode) === 401 || (body == null ? void 0 : body.code) === 401;
 }
+function isServerErrorResponse(res) {
+  const code = Number(res == null ? void 0 : res.statusCode);
+  return code >= 500 && code < 600;
+}
 function pickApiData(body) {
   return body == null ? void 0 : body.data;
 }
@@ -74,6 +78,7 @@ function parseLoginData(data) {
   };
 }
 exports.isApiSuccess = isApiSuccess;
+exports.isServerErrorResponse = isServerErrorResponse;
 exports.isUnauthorizedResponse = isUnauthorizedResponse;
 exports.parseLoginData = parseLoginData;
 exports.pickApiData = pickApiData;

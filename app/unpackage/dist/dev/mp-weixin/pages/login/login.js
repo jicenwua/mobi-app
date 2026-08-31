@@ -1,12 +1,11 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const common_assets = require("../../common/assets.js");
-require("../../utils/crypto-gateway.js");
-const api_modules_authToken = require("../../api/modules/auth-token.js");
-const utils_wxPrivacy = require("../../utils/wx-privacy.js");
+const api_modules_auth = require("../../api/modules/auth.js");
 const services_loginFlow = require("../../services/login-flow.js");
 const services_appSession = require("../../services/app-session.js");
 const services_userProfile = require("../../services/user-profile.js");
+const utils_wxPrivacy = require("../../utils/wx-privacy.js");
 const utils_qrcodeScan = require("../../utils/qrcode-scan.js");
 if (!Math) {
   PrivacyPopup();
@@ -22,21 +21,20 @@ const _sfc_main = {
     const privacyContractLabel = common_vendor.computed(
       () => utils_wxPrivacy.formatPrivacyContractLabel(privacyContractName.value)
     );
-    common_vendor.onLoad((options) => {
+    common_vendor.onLoad(async (options) => {
       const launchInvite = utils_qrcodeScan.parseLaunchShopInvite(options);
       if (launchInvite == null ? void 0 : launchInvite.token) {
         utils_qrcodeScan.savePendingShopInvite(launchInvite.token);
       } else if (launchInvite == null ? void 0 : launchInvite.shopCode) {
         utils_qrcodeScan.savePendingShopCode(launchInvite.shopCode);
       }
-      if (!api_modules_authToken.getToken())
+      const info = await api_modules_auth.fetchCurrentUserInfo();
+      if (!info.ok)
         return;
       const target = services_userProfile.hasCompletedProfileSetup() ? "/pages/main/main" : "/pages/login/profile-setup";
       common_vendor.index.reLaunch({ url: target });
     });
     common_vendor.onReady(() => {
-      if (api_modules_authToken.getToken())
-        return;
       utils_wxPrivacy.getPrivacySettingState().then((state) => {
         privacyContractName.value = state.privacyContractName;
         if (!state.needAuthorization) {
@@ -111,13 +109,13 @@ const _sfc_main = {
         b: common_vendor.t(loggingIn.value ? "登录中…" : "微信一键登录"),
         c: loggingIn.value,
         d: loggingIn.value || !agreedToPrivacy.value,
-        e: common_vendor.o(onWxLoginTap, "a6"),
+        e: common_vendor.o(onWxLoginTap, "64"),
         f: agreedToPrivacy.value
       }, agreedToPrivacy.value ? {} : {}, {
         g: agreedToPrivacy.value ? 1 : "",
         h: common_vendor.t(privacyContractLabel.value),
-        i: common_vendor.o(openPrivacyGuide, "d4"),
-        j: common_vendor.o(onPrivacyToggle, "9f"),
+        i: common_vendor.o(openPrivacyGuide, "dd"),
+        j: common_vendor.o(onPrivacyToggle, "22"),
         k: errorMsg.value
       }, errorMsg.value ? {
         l: common_vendor.t(errorMsg.value)

@@ -72,6 +72,14 @@ function fetchCurrentUserInfo() {
           resolve({ ok: false, unauthorized: true, msg: body.msg || "登录已失效" });
           return;
         }
+        if (utils_apiResponse.isServerErrorResponse(res)) {
+          resolve({
+            ok: false,
+            serverError: true,
+            msg: body.msg || "服务暂不可用，请稍后重试"
+          });
+          return;
+        }
         const ok = res.statusCode === 200 && utils_apiResponse.isApiSuccess(body);
         const login = utils_apiResponse.parseLoginData(utils_apiResponse.pickApiData(body));
         const avatarUrl = utils_avatar.resolveAvatarUrl(login.avatar);

@@ -4,7 +4,7 @@
 			<view class="brand-logo-wrap">
 				<image class="brand-logo" src="/static/尚品发艺.png" mode="aspectFill" />
 			</view>
-			<text class="brand-title">尚品发艺会员</text>
+			<text class="brand-title">尚品发艺会员助手</text>
 			<text class="brand-desc">登录后可使用店铺与会员服务</text>
 		</view>
 
@@ -45,7 +45,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { onLoad, onReady } from '@dcloudio/uni-app'
-import { getToken } from '@/api/modules/auth.js'
+import { fetchCurrentUserInfo } from '@/api/modules/auth.js'
 import { performQuickLogin, resolvePostLoginPath } from '@/services/login-flow.js'
 import { resetAppSession } from '@/services/app-session.js'
 import { hasCompletedProfileSetup } from '@/services/user-profile.js'
@@ -72,14 +72,16 @@ const privacyContractLabel = computed(() =>
 	formatPrivacyContractLabel(privacyContractName.value)
 )
 
-onLoad((options) => {
+onLoad(async (options) => {
 	const launchInvite = parseLaunchShopInvite(options)
 	if (launchInvite?.token) {
 		savePendingShopInvite(launchInvite.token)
 	} else if (launchInvite?.shopCode) {
 		savePendingShopCode(launchInvite.shopCode)
 	}
-	if (!getToken()) return
+	// 校验 token 是否仍有效，避免主/登录页因失效 token 互相跳转
+	const info = await fetchCurrentUserInfo()
+	if (!info.ok) return
 	const target = hasCompletedProfileSetup()
 		? '/pages/main/main'
 		: '/pages/login/profile-setup'
@@ -88,7 +90,6 @@ onLoad((options) => {
 
 /** 进入页面：同步微信隐私状态，首次进入需弹出隐私指引 */
 onReady(() => {
-	if (getToken()) return
 	getPrivacySettingState().then((state) => {
 		privacyContractName.value = state.privacyContractName
 		if (!state.needAuthorization) {

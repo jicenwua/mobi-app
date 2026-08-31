@@ -5,7 +5,8 @@ import {
 	parseLoginData,
 	pickApiData,
 	unwrapResponseBody,
-	isUnauthorizedResponse
+	isUnauthorizedResponse,
+	isServerErrorResponse
 } from '@/utils/api-response.js'
 import {
 	isDefaultAvatarUrl,
@@ -96,6 +97,14 @@ export function fetchCurrentUserInfo() {
 					clearAuthSession()
 					disconnectNotifySocket()
 					resolve({ ok: false, unauthorized: true, msg: body.msg || '登录已失效' })
+					return
+				}
+				if (isServerErrorResponse(res)) {
+					resolve({
+						ok: false,
+						serverError: true,
+						msg: body.msg || '服务暂不可用，请稍后重试'
+					})
 					return
 				}
 				const ok = res.statusCode === 200 && isApiSuccess(body)

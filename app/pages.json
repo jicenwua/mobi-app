@@ -21,7 +21,7 @@
 		{
 			"path": "pages/main/main",
 			"style": {
-				"navigationBarTitleText": "尚品发艺会员",
+				"navigationBarTitleText": "尚品发艺会员助手",
 				"navigationStyle": "custom",
 				"disableScroll": true
 			}
@@ -227,7 +227,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "尚品发艺会员",
+		"navigationBarTitleText": "尚品发艺会员助手",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
 		"app-plus": {

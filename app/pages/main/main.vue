@@ -25,7 +25,7 @@
 						>{{ isDark ? '☽' : '☀' }}</text>
 					</view>
 				</view>
-				<text class="nav-title">尚品发艺会员</text>
+				<text class="nav-title">尚品发艺会员助手</text>
 			</view>
 		</view>
 

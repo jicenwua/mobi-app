@@ -34,8 +34,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         String[] allowedOrigins = notifyWebSocketProperties.getAllowedOrigins()
                 .toArray(String[]::new);
-        registry.addHandler(notifyWebSocketHandler, NotifyConstants.WS_PATH)
-                .addInterceptors(notifyHandshakeInterceptor)
-                .setAllowedOriginPatterns(allowedOrigins);
+        registry.addHandler(notifyWebSocketHandler, NotifyConstants.WS_PATH)    //校验请求是否合法的请求地址，不合法则直接拒绝连接
+                .addInterceptors(notifyHandshakeInterceptor)                //第一次连接首先进行三次握手拦截（实际就是连接请求校验）
+                .setAllowedOriginPatterns(allowedOrigins);      //校验websocket请求是合法的来源（这里是只发送请求的网页等实际挂在的服务器的地址或者域名）
     }
 }
