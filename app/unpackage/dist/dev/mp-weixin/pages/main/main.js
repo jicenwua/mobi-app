@@ -375,7 +375,7 @@ const _sfc_main = {
       }, !common_vendor.unref(memberDetailShopId) && (canMemberSearch.value || canMemberJoin.value || showAddShopBtn.value) ? common_vendor.e({
         j: showAddShopBtn.value && !common_vendor.unref(memberSearchOpen)
       }, showAddShopBtn.value && !common_vendor.unref(memberSearchOpen) ? {
-        k: common_vendor.o((...args) => common_vendor.unref(goAddShop) && common_vendor.unref(goAddShop)(...args), "64")
+        k: common_vendor.o((...args) => common_vendor.unref(goAddShop) && common_vendor.unref(goAddShop)(...args), "0d")
       } : {}, {
         l: canMemberSearch.value && common_vendor.unref(memberSearchOpen)
       }, canMemberSearch.value && common_vendor.unref(memberSearchOpen) ? {
@@ -385,17 +385,17 @@ const _sfc_main = {
           color: searchIconColor.value
         }),
         n: common_vendor.unref(memberSearchFocus),
-        o: common_vendor.o((...args) => common_vendor.unref(onMemberSearchConfirm) && common_vendor.unref(onMemberSearchConfirm)(...args), "6c"),
+        o: common_vendor.o((...args) => common_vendor.unref(onMemberSearchConfirm) && common_vendor.unref(onMemberSearchConfirm)(...args), "d5"),
         p: common_vendor.unref(memberSearchKeyword),
-        q: common_vendor.o(($event) => common_vendor.isRef(memberSearchKeyword) ? memberSearchKeyword.value = $event.detail.value : null, "e9"),
-        r: common_vendor.o((...args) => common_vendor.unref(closeMemberSearch) && common_vendor.unref(closeMemberSearch)(...args), "ad")
+        q: common_vendor.o(($event) => common_vendor.isRef(memberSearchKeyword) ? memberSearchKeyword.value = $event.detail.value : null, "5e"),
+        r: common_vendor.o((...args) => common_vendor.unref(closeMemberSearch) && common_vendor.unref(closeMemberSearch)(...args), "70")
       } : canMemberSearch.value ? {
         t: common_vendor.p({
           type: "search",
           size: 22,
           color: searchIconColor.value
         }),
-        v: common_vendor.o((...args) => common_vendor.unref(openMemberSearch) && common_vendor.unref(openMemberSearch)(...args), "21")
+        v: common_vendor.o((...args) => common_vendor.unref(openMemberSearch) && common_vendor.unref(openMemberSearch)(...args), "f8")
       } : {}, {
         s: canMemberSearch.value,
         w: canMemberJoin.value && !common_vendor.unref(memberSearchOpen)
@@ -405,7 +405,7 @@ const _sfc_main = {
           size: 22,
           color: searchIconColor.value
         }),
-        y: common_vendor.o((...args) => common_vendor.unref(scanShopCode) && common_vendor.unref(scanShopCode)(...args), "1d")
+        y: common_vendor.o((...args) => common_vendor.unref(scanShopCode) && common_vendor.unref(scanShopCode)(...args), "75")
       } : {}) : {}, {
         z: common_vendor.unref(memberDetailShopId)
       }, common_vendor.unref(memberDetailShopId) ? {
@@ -451,7 +451,7 @@ const _sfc_main = {
         O: common_vendor.t(common_vendor.unref(memberJoinBtnText)),
         P: common_vendor.unref(memberAlreadyJoined) || common_vendor.unref(memberJoining) ? 1 : "",
         Q: common_vendor.unref(memberAlreadyJoined) || common_vendor.unref(memberJoining) ? "none" : "tap-hover-opacity-mid",
-        R: common_vendor.o((...args) => common_vendor.unref(onJoinShop) && common_vendor.unref(onJoinShop)(...args), "de")
+        R: common_vendor.o((...args) => common_vendor.unref(onJoinShop) && common_vendor.unref(onJoinShop)(...args), "53")
       } : {}) : common_vendor.e({
         S: common_vendor.unref(memberLoading) && !common_vendor.unref(memberList).length
       }, common_vendor.unref(memberLoading) && !common_vendor.unref(memberList).length ? {
@@ -488,8 +488,8 @@ const _sfc_main = {
         E: common_vendor.unref(memberEnterPreview),
         Z: common_vendor.n(canMemberSearch.value || canMemberJoin.value || showAddShopBtn.value ? "shop-scroll--with-toolbar" : ""),
         aa: common_vendor.unref(memberRefreshing),
-        ab: common_vendor.o((...args) => common_vendor.unref(onMemberRefresh) && common_vendor.unref(onMemberRefresh)(...args), "12"),
-        ac: common_vendor.o((...args) => common_vendor.unref(loadMoreMemberShops) && common_vendor.unref(loadMoreMemberShops)(...args), "b1")
+        ab: common_vendor.o((...args) => common_vendor.unref(onMemberRefresh) && common_vendor.unref(onMemberRefresh)(...args), "e4"),
+        ac: common_vendor.o((...args) => common_vendor.unref(loadMoreMemberShops) && common_vendor.unref(loadMoreMemberShops)(...args), "c8")
       })) : {}, {
         ad: activeTab.value === "orders"
       }, activeTab.value === "orders" ? {
@@ -502,11 +502,11 @@ const _sfc_main = {
       } : {}, {
         ag: activeTab.value === "mine"
       }, activeTab.value === "mine" ? {
-        ah: common_vendor.o(goProfile, "14"),
-        ai: common_vendor.o(goCoupons, "d3"),
+        ah: common_vendor.o(goProfile, "73"),
+        ai: common_vendor.o(goCoupons, "99"),
         aj: common_vendor.o(goPayQrcode, "2c"),
-        ak: common_vendor.o(goSetPassword, "11"),
-        al: common_vendor.o(goTickets, "ab"),
+        ak: common_vendor.o(goSetPassword, "98"),
+        al: common_vendor.o(goTickets, "3a"),
         am: common_vendor.p({
           ["user-profile"]: userProfile.value,
           ["display-nickname"]: displayNickname.value,

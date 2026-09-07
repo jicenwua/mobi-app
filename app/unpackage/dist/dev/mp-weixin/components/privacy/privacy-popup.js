@@ -45,9 +45,9 @@ const _sfc_main = {
         a: common_vendor.unref(utils_wxPrivacy.privacyPopupVisible)
       }, common_vendor.unref(utils_wxPrivacy.privacyPopupVisible) ? {
         b: common_vendor.t(contractLabel.value),
-        c: common_vendor.o((...args) => common_vendor.unref(utils_wxPrivacy.openPrivacyContract) && common_vendor.unref(utils_wxPrivacy.openPrivacyContract)(...args), "ee"),
-        d: common_vendor.o(handleDisagree, "88"),
-        e: common_vendor.o(handleAgree, "e3"),
+        c: common_vendor.o((...args) => common_vendor.unref(utils_wxPrivacy.openPrivacyContract) && common_vendor.unref(utils_wxPrivacy.openPrivacyContract)(...args), "77"),
+        d: common_vendor.o(handleDisagree, "ed"),
+        e: common_vendor.o(handleAgree, "30"),
         f: common_vendor.o(() => {
         }, "28"),
         g: common_vendor.o(() => {

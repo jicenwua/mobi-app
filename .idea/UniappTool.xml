@@ -4,13 +4,13 @@
     <option name="basePath" value="$PROJECT_DIR$/app" />
     <option name="generalBasePath" value="$PROJECT_DIR$/app" />
     <option name="manifestPath" value="$PROJECT_DIR$/app/manifest.json" />
-    <option name="manifestStamp" value="0" />
+    <option name="manifestStamp" value="9994" />
     <option name="pagesPath" value="$PROJECT_DIR$/app/pages.json" />
     <option name="scanNum" value="1" />
     <option name="type" value="store" />
     <option name="uniapp" value="true" />
     <option name="uniappHx" value="true" />
     <option name="vueVersion" value="3" />
-    <option name="wxAppId" value="wx153a359332ca842b" />
+    <option name="wxAppId" value="wx2d777a79769d9409" />
   </component>
 </project>

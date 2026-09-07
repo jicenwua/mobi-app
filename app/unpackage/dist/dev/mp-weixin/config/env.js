@@ -1,5 +1,6 @@
 "use strict";
-const GATEWAY_BASE_URL = "http://127.0.0.1:30000";
+const DEV_GATEWAY_BASE_URL = "http://127.0.0.1:30000";
+const GATEWAY_BASE_URL = DEV_GATEWAY_BASE_URL;
 const GW_FORBIDDEN_ADMIN_PATH_PREFIX = "/mobi/dashboard";
 const GW_SERVICE_PREFIX = {
   customer: "/mobi"

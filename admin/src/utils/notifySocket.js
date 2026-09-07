@@ -4,9 +4,13 @@ const listeners = new Set()
 let socket = null
 
 function buildWsUrl(token) {
+  const apiBase = import.meta.env.VITE_APP_BASE_API || ''
+  const suffix = `/mobi/notify/ws?token=${encodeURIComponent(token)}&client=staff`
+  if (/^https?:\/\//i.test(apiBase)) {
+    return `${apiBase.replace(/^http/i, 'ws')}${suffix}`
+  }
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  const base = import.meta.env.VITE_APP_BASE_API || ''
-  return `${protocol}//${window.location.host}${base}/mobi/notify/ws?token=${encodeURIComponent(token)}&client=staff`
+  return `${protocol}//${window.location.host}${apiBase}${suffix}`
 }
 
 function teardownSocket() {

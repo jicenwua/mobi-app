@@ -1,7 +1,6 @@
 package com.xcz.member.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.xcz.commons.core.exception.user.UserPasswordNotMatchException;
 import com.xcz.commons.core.utils.ServletUtils;
 import com.xcz.commons.core.utils.ip.IpUtils;
 import com.xcz.commons.core.utils.ip.Ipv6Utils;
@@ -11,7 +10,6 @@ import com.xcz.member.user.domain.SysUser;
 import com.xcz.member.user.domain.dto.LoginDTO;
 import com.xcz.member.user.service.SysLogService;
 import com.xcz.member.user.service.SysLoginService;
-import com.xcz.member.user.service.SysRoleService;
 import com.xcz.member.user.service.SysUserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -83,11 +81,7 @@ public class SysLoginServiceImpl implements SysLoginService {
                     .loginLocation(IpUtils.getIpLocation(ip))
                     .ipaddr(ip)
                     .build();
-            if (e instanceof UserPasswordNotMatchException) {
-                sysLogService.saveLoginLog(1, "账号或者密码错误", build);
-                throw new UserPasswordNotMatchException();
-            }
-            sysLogService.saveLoginLog(1, e.getMessage(), build);
+            sysLogService.saveLoginLog(1, "账号或者密码错误", build);
             throw e;
         }
     }

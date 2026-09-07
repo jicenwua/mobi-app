@@ -31,6 +31,7 @@ import java.util.Map;
 
 /**
  * 请求解密过滤器：对带 {@code X-Encrypted-Body} 的请求解密或协商会话密钥后转发。
+ * 混合加密的时候，是
  * 响应加密由 {@link CryptoResponseEncryptFilter} 复用同一 AES 会话密钥处理。
  */
 @Component
