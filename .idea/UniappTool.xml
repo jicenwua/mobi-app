@@ -2,11 +2,13 @@
 <project version="4">
   <component name="cn.fjdmy.uniapp.UniappProjectDataService">
     <option name="basePath" value="$PROJECT_DIR$/app" />
+    <option name="dataVersion" value="2" />
     <option name="generalBasePath" value="$PROJECT_DIR$/app" />
     <option name="manifestPath" value="$PROJECT_DIR$/app/manifest.json" />
-    <option name="manifestStamp" value="9994" />
+    <option name="manifestStamp" value="1454" />
     <option name="pagesPath" value="$PROJECT_DIR$/app/pages.json" />
     <option name="scanNum" value="1" />
+    <option name="subProject" value="true" />
     <option name="type" value="store" />
     <option name="uniapp" value="true" />
     <option name="uniappHx" value="true" />

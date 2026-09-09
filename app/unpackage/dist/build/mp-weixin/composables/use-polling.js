@@ -1,0 +1,1 @@
+"use strict";const n=require("../common/vendor.js");exports.usePolling=function(o,t,e){let l=null;function r(){l&&(clearInterval(l),l=null)}function s(){r(),o()&&(l=setInterval((()=>{o()?t():r()}),e))}return n.onShow((()=>s())),n.onHide((()=>r())),n.onUnload((()=>r())),{start:s,stop:r}};

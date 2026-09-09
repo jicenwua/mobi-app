@@ -1,0 +1,1 @@
+"use strict";let a=null;exports.setProfileEditCache=function(t){a=t&&"object"==typeof t?{nickname:t.nickname||"",avatar:t.avatar||"",avatarUrl:t.avatarUrl||t.avatar||"",isDefault:!!t.isDefault}:null},exports.takeProfileEditCache=function(){const t=a;return a=null,t};

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "新建工单",
+  "backgroundColor": "#f5f5f5",
+  "backgroundColorContent": "#f5f5f5",
+  "animationType": "slide-in-right",
+  "animationDuration": 200,
+  "usingComponents": {}
+}

@@ -1,0 +1,1 @@
+"use strict";const n=require("../common/vendor.js"),e=require("../services/notify-socket.js");exports.useTicketNotify=function(s){let o=null;function u(){null==o||o(),o=null}return n.onUnload(u),{subscribe:function(){null==o||o(),o=e.onNotifyMessage(s)},unsubscribe:u}};

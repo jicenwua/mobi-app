@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "尚品发艺会员助手",
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "usingComponents": {
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "shop-card": "../../components/shop/shop-card",
+    "shop-image-swiper": "../../components/shop/shop-image-swiper",
+    "member-shop-detail-content": "../../components/member/member-shop-detail-content",
+    "member-orders-content": "../../components/member/member-orders-content",
+    "main-mine-panel": "../../components/main/main-mine-panel",
+    "page-loading": "../../components/common/page-loading"
+  }
+}

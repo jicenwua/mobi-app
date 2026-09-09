@@ -1,0 +1,1 @@
+"use strict";const e=require("../../common/vendor.js"),i={__name:"shop-detail",setup:i=>(e.onLoad((i=>{const n=(null==i?void 0:i.id)?String(i.id):"";n?e.index.redirectTo({url:`/pages/main/main?shopId=${n}`}):e.index.redirectTo({url:"/pages/main/main"})})),(e,i)=>({}))};wx.createPage(i);

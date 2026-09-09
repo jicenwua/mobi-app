@@ -1,0 +1,1 @@
+"use strict";require("../common/vendor.js"),require("../config/env.js"),exports.isLocalUploadPath=function(t){const s=String(t||"").trim();return!!s&&(s.startsWith("wxfile://")||s.startsWith("file://")||s.startsWith("http://tmp/")||!s.startsWith("http://")&&!s.startsWith("https://")&&!s.startsWith("//"))};

@@ -1,0 +1,1 @@
+"use strict";require("../common/vendor.js"),exports.useDebounceFn=function(n,e=300){let u=null;function t(){u&&(clearTimeout(u),u=null)}return{run:function(...o){t(),u=setTimeout((()=>{u=null,n(...o)}),e)},cancel:t}};

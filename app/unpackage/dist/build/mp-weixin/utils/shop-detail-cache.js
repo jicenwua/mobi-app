@@ -1,0 +1,1 @@
+"use strict";const t=new Map;exports.getCachedShopDetail=function(e){return null==e||""===e?null:t.get(String(e))??null},exports.setCachedShopDetail=function(e,n){null!=e&&""!==e&&n&&t.set(String(e),n)};
