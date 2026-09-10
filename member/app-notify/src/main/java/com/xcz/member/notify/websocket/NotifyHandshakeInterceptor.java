@@ -46,12 +46,12 @@ public class NotifyHandshakeInterceptor implements HandshakeInterceptor {
         String token = servletRequest.getServletRequest().getParameter("token");
         String client = servletRequest.getServletRequest().getParameter("client");
         if (StringUtils.isEmpty(token)) {
-            log.debug("WebSocket 握手失败：缺少 token");
+            log.warn("WebSocket 握手失败：缺少 token");
             return false;
         }
         NotifyClientType clientType = NotifyClientType.fromCode(client);
         if (clientType == null) {
-            log.debug("WebSocket 握手失败：client 无效 {}", client);
+            log.warn("WebSocket 握手失败：client 无效 {}", client);
             return false;
         }
         try {
@@ -60,11 +60,12 @@ public class NotifyHandshakeInterceptor implements HandshakeInterceptor {
             LoginUser loginUser = session.loginUser();
             NotifyClientType expectedClientType = NotifyClientTypeResolver.resolveExpectedClientType(loginUser);
             if (expectedClientType == null) {
-                log.debug("WebSocket 握手失败：无法判定客户端类型 userId={}", loginUser.getUserId());
+                log.warn("WebSocket 握手失败：无法判定客户端类型 userId={}", loginUser.getUserId());
                 return false;
             }
             if (clientType != expectedClientType) {
-                log.debug("WebSocket 握手失败：client={} 与权限不匹配，期望 {}", client, expectedClientType.getCode());
+                log.warn("WebSocket 握手失败：client={} 与权限不匹配，期望 {}，userId={}",
+                        client, expectedClientType.getCode(), loginUser.getUserId());
                 return false;
             }
             attributes.put("userId", loginUser.getUserId());
@@ -72,7 +73,7 @@ public class NotifyHandshakeInterceptor implements HandshakeInterceptor {
             attributes.put("connectedAt", System.currentTimeMillis());
             return true;
         } catch (Exception e) {
-            log.debug("WebSocket 握手失败：{}", e.getMessage());
+            log.warn("WebSocket 握手失败：{}", e.getMessage());
             return false;
         }
     }

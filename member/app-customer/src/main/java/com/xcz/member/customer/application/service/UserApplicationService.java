@@ -90,6 +90,10 @@ public class UserApplicationService {
             Map<String, Object> result = new HashMap<>();
             result.put("token", loginUser.getToken());
             result.put("register", !exists);
+            result.put("nickName", user.getNickname());
+            result.put("avatar", uploadService.getUrl(user.getAvatarUrl()));
+            result.put("permission", loginUser.getPermissions());
+            result.put("setPassword", hasPayPassword(user));
             return result;
         } catch (WxErrorException e) {
             throw new ServiceException("微信登录失败：" + e.getMessage());
@@ -176,11 +180,12 @@ public class UserApplicationService {
      * @param password 6 位数字支付密码
      */
     public void verifyPassword(PasswordVerifyReq password) {
-        LoginUser loginUser = SecurityUtils.getLoginUser();
-        if (StringUtils.isEmpty(loginUser.getPassword())) {
+        Long userId = SecurityUtils.getUserId();
+        MobiUser userInfo = mobiUserService.getById(userId);
+        if (!hasPayPassword(userInfo)) {
             throw new ServiceException("请先设置支付密码");
         }
-        if (!passwordEncoder.matches(password.getPassword(), loginUser.getPassword())) {
+        if (!passwordEncoder.matches(password.getPassword(), userInfo.getPassword())) {
             throw new ServiceException("支付密码错误");
         }
     }
@@ -192,6 +197,7 @@ public class UserApplicationService {
      */
     public Map<String, Object> getUserInfo() {
         LoginUser loginUser = SecurityUtils.getLoginUser();
+        MobiUser userInfo = mobiUserService.getById(loginUser.getUserId());
         UserCache.saveUserInfo(new UserInfoCacheDTO(loginUser.getUserId(), loginUser.getName(), loginUser.getAvatar()));
 
         // 构建返回信息
@@ -200,8 +206,13 @@ public class UserApplicationService {
         info.put("permission", loginUser.getPermissions());
         info.put("nickName", loginUser.getName());
         info.put("avatar", uploadService.getUrl(loginUser.getAvatar()));
-        info.put("setPassword", loginUser.getPassword() != null);
+        // 以数据库为准：LoginUser 缓存中通常不持久化 password 字段
+        info.put("setPassword", hasPayPassword(userInfo));
         return info;
+    }
+
+    private static boolean hasPayPassword(MobiUser user) {
+        return user != null && StringUtils.isNotEmpty(user.getPassword());
     }
 
     /**

@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xcz.commons.core.exception.ServiceException;
 import com.xcz.member.customer.domain.enums.ShopUserRole;
+import com.xcz.member.customer.domain.service.MobiPointsAccountService;
 import com.xcz.member.customer.domain.service.MobiShopUserService;
+import com.xcz.member.customer.infrastructure.cache.ShopCache;
+import com.xcz.member.customer.infrastructure.entity.MobiPointsAccount;
 import com.xcz.member.customer.infrastructure.entity.MobiShopUser;
 import com.xcz.member.customer.infrastructure.mapper.MobiShopUserMapper;
-import com.xcz.member.customer.infrastructure.cache.ShopCache;
 import com.xcz.member.customer.utils.ShopAccessUtils;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,9 @@ import java.util.List;
  */
 @Service
 public class MobiShopUserServiceImpl extends ServiceImpl<MobiShopUserMapper, MobiShopUser> implements MobiShopUserService {
+
+    @Resource
+    private MobiPointsAccountService mobiPointsAccountService;
 
     /**
      * 根据用户 ID 查询其关联的全部店铺关系。
@@ -112,6 +118,11 @@ public class MobiShopUserServiceImpl extends ServiceImpl<MobiShopUserMapper, Mob
             existing.setLastEnterTime(now);
             boolean updated = updateById(existing);
             if (updated) {
+                MobiPointsAccount mobiPointsAccount = MobiPointsAccount.builder()
+                        .shopId(shopId)
+                        .userId(userId)
+                        .build();
+                mobiPointsAccountService.save(mobiPointsAccount);
                 ShopAccessUtils.clearRoleCache(userId);
                 recordShopEnter(shopId, userId);
             }
@@ -127,6 +138,11 @@ public class MobiShopUserServiceImpl extends ServiceImpl<MobiShopUserMapper, Mob
                 .build();
         boolean saved = save(shopUser);
         if (saved) {
+            MobiPointsAccount mobiPointsAccount = MobiPointsAccount.builder()
+                    .shopId(shopId)
+                    .userId(userId)
+                    .build();
+            mobiPointsAccountService.save(mobiPointsAccount);
             ShopAccessUtils.clearRoleCache(userId);
             recordShopEnter(shopId, userId);
         }

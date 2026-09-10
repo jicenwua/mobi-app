@@ -1,6 +1,13 @@
 <template>
 	<view class="catalog" :class="{ 'catalog--dark': isDark }">
-		<scroll-view class="catalog-sidebar" scroll-y :show-scrollbar="false" :style="mainScrollStyle" :scroll-into-view="sidebarScrollIntoView">
+		<scroll-view
+			class="catalog-sidebar"
+			scroll-y
+			enable-flex
+			:show-scrollbar="false"
+			:style="sidebarScrollStyle"
+			:scroll-into-view="sidebarScrollIntoView"
+		>
 			<view
 				v-for="cat in visibleCategories"
 				:key="cat.categoryId"
@@ -19,6 +26,7 @@
 			id="catalog-main-scroll"
 			class="catalog-main"
 			scroll-y
+			enable-flex
 			:show-scrollbar="false"
 			:style="mainScrollStyle"
 			:scroll-top="mainScrollTop"
@@ -155,6 +163,8 @@ const mainScrollHeight = ref(0)
 const isProgrammaticScroll = ref(false)
 let programmaticScrollTimer = null
 let measureToken = 0
+
+const sidebarScrollStyle = computed(() => ({ height: '100%' }))
 
 const mainScrollStyle = computed(() => {
 	if (mainScrollHeight.value > 0) {
@@ -409,8 +419,11 @@ function onQtyChange(product, delta) {
 <style scoped>
 .catalog {
 	display: flex;
+	flex: 1;
+	width: 100%;
 	height: 100%;
 	min-height: 0;
+	align-self: stretch;
 	background: #fff;
 	border-radius: 14px;
 	overflow: hidden;
@@ -428,6 +441,7 @@ function onQtyChange(product, delta) {
 	width: 88px;
 	flex-shrink: 0;
 	align-self: stretch;
+	height: 100%;
 	background: #f5f6f8;
 }
 
@@ -488,6 +502,12 @@ function onQtyChange(product, delta) {
 	flex: 1;
 	min-width: 0;
 	min-height: 0;
+	height: 100%;
+	background: #fff;
+}
+
+.catalog--dark .catalog-main {
+	background: #1c1c24;
 }
 
 .catalog-main-inner {
@@ -727,17 +747,3 @@ function onQtyChange(product, delta) {
 }
 </style>
 
-<style>
-.catalog-panel-body {
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	box-sizing: border-box;
-}
-
-.catalog-panel-body .catalog {
-	flex: 1;
-	min-height: 0;
-	height: 100%;
-}
-</style>

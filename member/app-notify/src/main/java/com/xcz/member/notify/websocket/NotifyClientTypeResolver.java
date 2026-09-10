@@ -32,6 +32,10 @@ public class NotifyClientTypeResolver {
         if (roles.contains(SecurityConstants.WX_APP_ROLE)) {
             return NotifyClientType.CUSTOMER;
         }
+        // 小程序登录用户权限挂在 wx:* 下，roleSet 未带 wx-app 时仍应识别为 C 端
+        if (permissions.stream().anyMatch(perm -> perm.startsWith("wx:"))) {
+            return NotifyClientType.CUSTOMER;
+        }
         return null;
     }
 }

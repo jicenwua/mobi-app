@@ -1,4 +1,5 @@
 <script>
+import PrivacyPopup from '@/components/privacy/privacy-popup.vue'
 import { setupPrivacyAuthorization } from '@/utils/wx-privacy.js'
 import { getToken } from '@/api/modules/auth.js'
 import { connectNotifySocket } from '@/services/notify-socket.js'
@@ -18,6 +19,7 @@ function saveLaunchShopInvite(options) {
 }
 
 export default {
+	components: { PrivacyPopup },
 	onLaunch(options) {
 		setupPrivacyAuthorization()
 		saveLaunchShopInvite(options?.query || options)
@@ -38,7 +40,9 @@ export default {
 }
 </script>
 
-<template></template>
+<template>
+	<PrivacyPopup />
+</template>
 
 <style lang="scss">
 	@import '@/uni_modules/uni-scss/index.scss';

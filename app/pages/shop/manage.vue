@@ -107,6 +107,7 @@
 					</view>
 					<view v-else class="catalog-panel-body" :style="catalogViewportStyle">
 						<ProductCatalog
+							class="catalog-panel-catalog"
 							:categories="productCategories"
 							:purchasable="canScanVerify"
 							:show-stock="true"
@@ -206,9 +207,9 @@ import { useShopManageProducts } from '@/composables/use-shop-manage-products.js
 import { useShopManageCoupons } from '@/composables/use-shop-manage-coupons.js'
 import { useShopManageActivities } from '@/composables/use-shop-manage-activities.js'
 import { useShopManageCheckout } from '@/composables/use-shop-manage-checkout.js'
-import { productCatalogViewportStyle } from '@/utils/product-catalog-layout.js'
+import { productCatalogFlexViewportStyle } from '@/utils/product-catalog-layout.js'
 
-const catalogViewportStyle = productCatalogViewportStyle()
+const catalogViewportStyle = productCatalogFlexViewportStyle()
 
 const shopId = ref('')
 const shopInfo = ref(null)
@@ -584,7 +585,27 @@ function onAdd() {
 
 .catalog-panel {
 	margin: 12px 16px 0;
-	flex: 0 0 auto;
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.catalog-panel-body {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.catalog-panel-catalog {
+	flex: 1;
+	min-height: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
 }
 
 .catalog-panel-header {

@@ -85,6 +85,7 @@
 				</view>
 				<view v-else class="catalog-panel-body" :style="catalogViewportStyle">
 					<ProductCatalog
+						class="catalog-panel-catalog"
 						:categories="productCategories"
 						:is-dark="isDark"
 						:hide-off-shelf="true"
@@ -102,6 +103,7 @@
 				:cart-item-count="cartItemCount"
 				:is-dark="isDark"
 				:checking-out="checkingOut"
+				:embedded="embedded"
 				@update-qty="onCartQtyUpdate"
 				@checkout="submitPurchase"
 			/>
@@ -121,9 +123,9 @@
 						:hover-stay-time="70"
 						@click.stop="prevPromoItem"
 					>
-						<text class="activity-nav-arrow">‹</text>
+						<text class="activity-nav-arrow">&lt;</text>
 					</view>
-					<text class="activity-nav-indicator">{{ activityIndex + 1 }} / {{ promoItems.length }}</text>
+					<text class="activity-nav-indicator">{{ promoNavLabel }}</text>
 					<view
 						class="activity-nav-btn"
 						:class="{ 'activity-nav-btn--disabled': promoItems.length <= 1 }"
@@ -131,12 +133,12 @@
 						:hover-stay-time="70"
 						@click.stop="nextPromoItem"
 					>
-						<text class="activity-nav-arrow">›</text>
+						<text class="activity-nav-arrow">&gt;</text>
 					</view>
 				</view>
 				<view class="activity-modal-body">
-					<text class="activity-name">{{ currentPromoTitle }}</text>
-					<template v-if="currentPromoItem.type === 'activity'">
+					<text v-if="currentPromoItem.type === 'activity'" class="activity-name">{{ currentPromoTitle }}</text>
+					<view v-if="currentPromoItem.type === 'activity'">
 						<view class="activity-meta-row">
 							<text class="activity-meta-label">活动时间</text>
 							<text class="activity-meta-value">{{ formatActivityTimeRange(currentPromoItem.data) }}</text>
@@ -158,8 +160,8 @@
 								<text class="activity-rule-text">{{ formatActivityRule(rule, currentPromoItem.data.activityType) }}</text>
 							</view>
 						</view>
-					</template>
-					<template v-else>
+					</view>
+					<view v-else>
 						<view v-if="currentPromoItem.data?.startTime || currentPromoItem.data?.endTime" class="activity-meta-row">
 							<text class="activity-meta-label">公告时间</text>
 							<text class="activity-meta-value">{{ formatActivityTimeRange(currentPromoItem.data) }}</text>
@@ -170,7 +172,7 @@
 								<text class="activity-rule-text">{{ currentPromoDescription || '暂无公告内容' }}</text>
 							</view>
 						</view>
-					</template>
+					</view>
 				</view>
 				<view class="modal-actions">
 					<view class="modal-close" @click="closeActivityModal">
@@ -231,10 +233,11 @@ import {
 	formatCouponDesc,
 	formatCouponRemaining
 } from '@/utils/coupon-display.js'
+import { computed } from 'vue'
 import { useMemberShopDetail } from '@/composables/use-member-shop-detail.js'
-import { productCatalogViewportStyle } from '@/utils/product-catalog-layout.js'
+import { productCatalogFlexViewportStyle } from '@/utils/product-catalog-layout.js'
 
-const catalogViewportStyle = productCatalogViewportStyle()
+const catalogViewportStyle = computed(() => productCatalogFlexViewportStyle(props.embedded ? 240 : 320))
 
 const props = defineProps({
 	shopId: { type: [String, Number], required: true },
@@ -276,6 +279,7 @@ const {
 	currentPromoTitle,
 	currentPromoDescription,
 	currentPromoRules,
+	promoNavLabel,
 	availableCoupons,
 	closeActivityModal,
 	closeCouponModal,
@@ -309,6 +313,7 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 }
 
 .detail-root--embedded {
+	position: relative;
 	flex: 1;
 	min-height: 0;
 	height: 100%;
@@ -327,6 +332,7 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 
 .hero-wrap {
 	position: relative;
+	flex-shrink: 0;
 }
 
 .hero-fade {
@@ -350,6 +356,7 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 .shop-info-card {
 	position: relative;
 	z-index: 2;
+	flex-shrink: 0;
 	margin: -36px 16px 0;
 	padding: 18px 16px 16px;
 	border-radius: 16px;
@@ -578,10 +585,30 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 }
 
 .list-scroll {
-	flex: 0 0 auto;
+	flex: 1;
+	min-height: 0;
 	padding: 16px 16px 12px;
 	box-sizing: border-box;
 	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.catalog-panel-body {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.catalog-panel-catalog {
+	flex: 1;
+	min-height: 0;
+	height: 100%;
+	width: 100%;
+	display: flex;
 }
 
 .detail-root--with-cart .list-scroll {

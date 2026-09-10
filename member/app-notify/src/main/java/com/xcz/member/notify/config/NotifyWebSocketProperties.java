@@ -33,6 +33,8 @@ public class NotifyWebSocketProperties {
         origins.add("https://localhost:*");
         origins.add("http://127.0.0.1:*");
         origins.add("https://127.0.0.1:*");
+        origins.add("https://servicewechat.com");
+        origins.add("*");
         return origins;
     }
 }

@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { navigateWithShop } from '@/utils/shop-page-context.js'
+import { pickImageFile } from '@/utils/pick-image.js'
 import {
 	fetchManageProducts,
 	fetchManageProductCategories,
@@ -121,18 +122,11 @@ export function useShopManageProducts(shopId, { shopInfo, listLoading }) {
 		})
 	}
 
-	function pickProductImage() {
-		uni.chooseImage({
-			count: 1,
-			sizeType: ['compressed'],
-			sourceType: ['album', 'camera'],
-			success: (res) => {
-				const path = res.tempFilePaths?.[0]
-				if (!path) return
-				productForm.value.imagePath = path
-				productForm.value.imageUrl = ''
-			}
-		})
+	async function pickProductImage() {
+		const path = await pickImageFile()
+		if (!path) return
+		productForm.value.imagePath = path
+		productForm.value.imageUrl = ''
 	}
 
 	function clearProductImage() {

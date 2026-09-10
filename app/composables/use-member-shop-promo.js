@@ -44,9 +44,17 @@ export function useMemberShopPromo(shopId, detail) {
 		const item = currentPromoItem.value
 		if (!item) return ''
 		if (item.type === 'announcement') {
-			return item.data.activityName || item.data.description?.slice(0, 20) || '店铺公告'
+			return '店铺公告'
 		}
-		return item.data.activityName || '未命名活动'
+		const name = String(item.data?.activityName || '').trim()
+		return name || '未命名活动'
+	})
+
+	const promoNavLabel = computed(() => {
+		const total = promoItems.value.length
+		if (total <= 1) return ''
+		const index = Number(activityIndex.value) || 0
+		return `${index + 1} / ${total}`
 	})
 
 	const currentPromoDescription = computed(() => {
@@ -219,6 +227,7 @@ export function useMemberShopPromo(shopId, detail) {
 		currentPromoTitle,
 		currentPromoDescription,
 		currentPromoRules,
+		promoNavLabel,
 		availableCoupons,
 		resetPromo,
 		showActivityModalIfNeeded,

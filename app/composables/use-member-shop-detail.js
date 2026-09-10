@@ -110,7 +110,10 @@ export function useMemberShopDetail(props) {
 	async function loadMemberDetailExtras(token) {
 		const id = shopId.value
 		if (!id || token !== detailLoadToken || !detail.value) return
-		if (productsLoaded.value) return
+		if (productsLoaded.value) {
+			productsLoading.value = false
+			return
+		}
 
 		productsLoading.value = true
 		try {
@@ -124,9 +127,7 @@ export function useMemberShopDetail(props) {
 			}
 			void loadAsyncMemberExtras(Number(id), token)
 		} finally {
-			if (token === detailLoadToken) {
-				productsLoading.value = false
-			}
+			productsLoading.value = false
 		}
 	}
 
@@ -180,8 +181,6 @@ export function useMemberShopDetail(props) {
 	}
 
 	async function applyShop(data) {
-		detailLoadToken += 1
-		const token = detailLoadToken
 		if (!canShowMemberTab()) {
 			errorMsg.value = '无会员访问权限'
 			loading.value = false
@@ -196,11 +195,16 @@ export function useMemberShopDetail(props) {
 			return
 		}
 		if (detail.value && isUsableShopDetail(detail.value)) {
-			if (!productsLoaded.value && token === detailLoadToken) {
-				await loadMemberDetailExtras(token)
+			const currentId = normalizeShopDetail(detail.value)?.id
+			if (String(currentId) === String(id)) {
+				if (!productsLoaded.value) {
+					await loadMemberDetailExtras(detailLoadToken)
+				}
+				return
 			}
-			return
 		}
+		detailLoadToken += 1
+		const token = detailLoadToken
 		if (!isUsableShopDetail(data)) {
 			await loadDetailFallback(token)
 			return

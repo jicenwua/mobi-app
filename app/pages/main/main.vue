@@ -233,7 +233,7 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
-import { getToken } from '@/api/modules/auth.js'
+import { getToken, fetchCurrentUserInfo } from '@/api/modules/auth.js'
 import { bootstrapAppSession } from '@/services/app-session.js'
 import { ensureAuthenticated } from '@/services/auth-relogin.js'
 import {
@@ -569,6 +569,7 @@ onShow(async () => {
 	}
 	connectNotifySocket()
 	userProfile.value = getUserProfile()
+	await fetchCurrentUserInfo()
 	payPasswordSet.value = hasPayPasswordSet()
 	ensureActiveTabValid()
 	if (activeTab.value === 'mine') {

@@ -32,7 +32,9 @@ function applyAuthFromLoginData(login) {
 		setToken(login.token)
 	}
 	setSessionPermissions(login.permission)
-	applyServerSetPasswordFlag(login.setPassword)
+	if (login.setPassword !== undefined) {
+		applyServerSetPasswordFlag(login.setPassword)
+	}
 }
 
 function buildLoginResult(ok, login, body) {

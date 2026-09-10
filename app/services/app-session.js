@@ -29,7 +29,7 @@ export function bootstrapAppSession() {
 
 function syncProfileFromInfo(info) {
 	if (!info.ok) return
-	if (info.setPassword !== undefined) {
+	if (info.setPassword !== undefined && info.setPassword !== null) {
 		applyServerSetPasswordFlag(info.setPassword)
 	}
 	if (info.nickname || info.avatarUrl) {

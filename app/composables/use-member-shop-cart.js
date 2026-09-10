@@ -1,6 +1,6 @@
 import { reactive, computed, ref } from 'vue'
 import { getShopCart, setShopCart } from '@/utils/shop-cart-cache.js'
-import { setShopPurchaseContext } from '@/utils/shop-purchase-context.js'
+import { setShopPurchaseContext, flattenProductCategories } from '@/utils/shop-purchase-context.js'
 import { formatPointsAmount } from '@/utils/points-format.js'
 
 /**
@@ -95,11 +95,11 @@ export function useMemberShopCart(shopId, { productCategories, detail }) {
 		}
 		const id = shopId.value
 		if (!id) return
-		setShopPurchaseContext({
-			shopId: id,
+		setShopPurchaseContext(id, {
 			shopName: detail.value?.shopName || '',
-			cartLines: cartLines.value,
-			totalPoints: cartTotalPoints.value
+			ratio: detail.value?.ratio,
+			products: flattenProductCategories(productCategories.value),
+			remainingPoints: detail.value?.remainingPoints
 		})
 		uni.navigateTo({
 			url: `/pages/member/purchase-confirm?shopId=${id}`,

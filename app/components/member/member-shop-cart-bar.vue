@@ -1,6 +1,13 @@
 <template>
 	<view v-if="cartItemCount > 0">
-		<view class="purchase-bar" :class="isDark ? 'purchase-bar--dark' : 'purchase-bar--light'">
+		<view
+			v-show="!sheetVisible"
+			class="purchase-bar"
+			:class="[
+				isDark ? 'purchase-bar--dark' : 'purchase-bar--light',
+				embedded ? 'purchase-bar--embedded' : ''
+			]"
+		>
 			<view
 				class="purchase-bar-cart"
 				hover-class="tap-hover-opacity-strong"
@@ -33,8 +40,20 @@
 			</view>
 		</view>
 
-		<view v-if="sheetVisible" class="modal-mask cart-sheet-mask" @click="sheetVisible = false">
-			<view class="cart-sheet" :class="isDark ? 'cart-sheet--dark' : 'cart-sheet--light'" @click.stop>
+		<view
+			v-if="sheetVisible"
+			class="modal-mask cart-sheet-mask"
+			:class="embedded ? 'cart-sheet-mask--embedded' : ''"
+			@click="sheetVisible = false"
+		>
+			<view
+				class="cart-sheet"
+				:class="[
+					isDark ? 'cart-sheet--dark' : 'cart-sheet--light',
+					embedded ? 'cart-sheet--embedded' : ''
+				]"
+				@click.stop
+			>
 				<view class="cart-sheet-header">
 					<text class="cart-sheet-title">购物车</text>
 					<text
@@ -105,7 +124,9 @@ const props = defineProps({
 	cartTotalPointsText: { type: String, default: '0' },
 	cartItemCount: { type: Number, default: 0 },
 	isDark: { type: Boolean, default: false },
-	checkingOut: { type: Boolean, default: false }
+	checkingOut: { type: Boolean, default: false },
+	/** 嵌入主屏时相对容器定位，避免遮挡底部 Tab */
+	embedded: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['checkout', 'update-qty', 'open-cart-detail'])
@@ -181,6 +202,12 @@ function onCheckoutFromSheet() {
 .purchase-bar--dark {
 	background: #1c1c24;
 	box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.28);
+}
+
+.purchase-bar--embedded {
+	bottom: calc(48px + env(safe-area-inset-bottom));
+	padding-bottom: 12px;
+	z-index: 15;
 }
 
 .purchase-bar-cart {
@@ -299,6 +326,10 @@ function onCheckoutFromSheet() {
 	padding: 0;
 }
 
+.cart-sheet-mask--embedded {
+	bottom: calc(48px + env(safe-area-inset-bottom));
+}
+
 .cart-sheet {
 	width: 100%;
 	max-height: 72vh;
@@ -316,6 +347,10 @@ function onCheckoutFromSheet() {
 .cart-sheet--dark {
 	background: #1c1c24;
 	color: #ececf0;
+}
+
+.cart-sheet--embedded {
+	padding-bottom: 16px;
 }
 
 .cart-sheet-header {

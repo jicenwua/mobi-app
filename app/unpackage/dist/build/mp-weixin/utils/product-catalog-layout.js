@@ -1,1 +1,1 @@
-"use strict";exports.productCatalogViewportStyle=function(t=500){return{height:`${t}px`}};
+"use strict";exports.productCatalogFlexViewportStyle=function(t=280){return{height:"100%",minHeight:`${t}px`}};

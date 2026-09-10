@@ -28,7 +28,25 @@ spring:
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD}
 
-#nacos中配置
+# WebSocket 握手 token 在 query 中传递，须放行由 NotifyHandshakeInterceptor 自行鉴权
+security:
+  ignore:
+    urls:
+      - /notify/ws
+      - /notify/ws/**
+
+notify:
+  ws:
+    allowed-origins:
+      - http://localhost:*
+      - https://localhost:*
+      - http://127.0.0.1:*
+      - https://127.0.0.1:*
+      - https://servicewechat.com
+      - "*"
+    max-connections-per-user: 3
+
+#nacos中配置（与上方保持一致，尤其是 security.ignore.urls 与 redis/security.jwt）
 #notify:
 #  ws:
 #    allowed-origins:

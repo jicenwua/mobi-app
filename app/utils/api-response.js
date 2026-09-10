@@ -47,12 +47,12 @@ export function pickApiList(body) {
 	return []
 }
 
-/** 解析是否已设置密码（后端字段 setPassword / isSetPassword） */
+/** 解析是否已设置密码（后端字段 setPassword / isSetPassword）；未返回时 undefined */
 export function parseSetPasswordFlag(data) {
-	if (data == null || typeof data !== 'object') return false
+	if (data == null || typeof data !== 'object') return undefined
 	if (data.setPassword !== undefined) return !!data.setPassword
 	if (data.isSetPassword !== undefined) return !!data.isSetPassword
-	return false
+	return undefined
 }
 
 /** 解析登录 data：token / register / nickName / avatar / permission / setPassword */
