@@ -131,16 +131,20 @@ export function uploadMultipartForm(opts) {
 					const chunks = []
 
 					for (const part of opts.parts || []) {
-						const { name, filePath, data, filename, contentType } = part
+						const { name, filePath, data, filename, contentType, text } = part
 						if (filePath) {
 							const fn = filename || guessFilename(filePath)
 							const ct = contentType || 'image/jpeg'
 							chunks.push(buildPartHeader(boundary, name, fn, ct))
 							chunks.push(await readFileArrayBuffer(filePath))
 						} else if (data != null) {
-							const fn = filename || 'part.dat'
-							const ct = contentType || 'application/octet-stream'
-							chunks.push(buildPartHeader(boundary, name, fn, ct))
+							if (text) {
+								chunks.push(buildPartHeader(boundary, name, null, null))
+							} else {
+								const fn = filename || 'part.dat'
+								const ct = contentType || 'application/octet-stream'
+								chunks.push(buildPartHeader(boundary, name, fn, ct))
+							}
 							chunks.push(typeof data === 'string' ? utf8Bytes(data) : data)
 						} else {
 							continue

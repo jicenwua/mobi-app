@@ -1,4 +1,5 @@
 import {request, buildGatewayUrl} from '@/api/http/client.js'
+import {uploadMultipartForm} from '@/utils/multipart-upload.js'
 import {CUSTOMER_API} from '@/api/constants/customer.js'
 import {getToken} from '@/api/modules/auth.js'
 import {isApiSuccess, unwrapResponseBody} from '@/utils/api-response.js'
@@ -84,7 +85,7 @@ function parseUpdateUploadResponse(res) {
 
 /**
  * 更新用户资料 POST /app/update
- * multipart：formData.nickName（昵称）+ 单个文件 file（头像，可选）
+ * multipart：nickName（昵称）+ 单个文件 file（头像，可选）
  * 微信小程序一次 uploadFile 只传一个文件，昵称走 formData，不是第二个文件部件。
  *
  * @param {{ nickName: string, avatarPath?: string, requireAvatar?: boolean }} payload
@@ -114,7 +115,7 @@ export function updateUserInfo(payload) {
                 filePath: avatarPath,
                 name: 'file',
                 formData: {
-                        'nickname': nickName
+                    nickName
                 },
                 header,
                 timeout: 60000,
@@ -124,24 +125,13 @@ export function updateUserInfo(payload) {
         })
     }
 
-    // 仅改昵称：无文件，走网关加密 JSON（后端 nickName 必填、file 可选）
-    return new Promise((resolve) => {
-        request({
-            service: 'customer',
-            path: CUSTOMER_API.UPDATE_NICKNAME || CUSTOMER_API.UPDATE,
-            method: 'POST',
-            data: {nickName},
-            header,
-            timeout: 60000,
-            success: (res) => {
-                const body = unwrapResponseBody(res.data)
-                const ok = res.statusCode === 200 && isApiSuccess(body)
-                resolve({
-                    ok,
-                    msg: body.msg || (ok ? '更新成功' : '更新失败')
-                })
-            },
-            fail: (err) => resolve({ok: false, msg: err.errMsg || '网络错误'})
-        })
+    // 仅改昵称：后端 /app/update 只接受 multipart，nickName 走表单字段、file 可选
+    return uploadMultipartForm({
+        url: buildGatewayUrl('customer', CUSTOMER_API.UPDATE),
+        header,
+        timeout: 60000,
+        parts: [{name: 'nickName', data: nickName, text: true}]
     })
+        .then((res) => parseUpdateUploadResponse(res))
+        .catch((err) => ({ok: false, msg: err?.message || '网络错误'}))
 }
