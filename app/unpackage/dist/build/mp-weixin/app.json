@@ -1,8 +1,8 @@
 {
   "pages": [
+    "pages/main/main",
     "pages/login/login",
     "pages/login/profile-setup",
-    "pages/main/main",
     "pages/mine/profile",
     "pages/mine/set-password",
     "pages/mine/coupons",

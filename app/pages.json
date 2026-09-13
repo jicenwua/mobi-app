@@ -1,6 +1,14 @@
 {
 	"pages": [
 		{
+			"path": "pages/main/main",
+			"style": {
+				"navigationBarTitleText": "尚品发艺会员助手",
+				"navigationStyle": "custom",
+				"disableScroll": true
+			}
+		},
+		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "登录",
@@ -15,14 +23,6 @@
 				"navigationStyle": "custom",
 				"backgroundColor": "#f5f5f5",
 				"backgroundColorContent": "#f5f5f5",
-				"disableScroll": true
-			}
-		},
-		{
-			"path": "pages/main/main",
-			"style": {
-				"navigationBarTitleText": "尚品发艺会员助手",
-				"navigationStyle": "custom",
 				"disableScroll": true
 			}
 		},
@@ -217,7 +217,7 @@
 				{
 					"path": "pay-qrcode",
 					"style": {
-						"navigationBarTitleText": "付款码",
+						"navigationBarTitleText": "积分码",
 						"animationType": "slide-in-right",
 						"animationDuration": 200
 					}

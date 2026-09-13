@@ -133,6 +133,19 @@ public class ShopApplicationQueryService {
     }
 
     /**
+     * 按店铺 ID 查询店铺详情（未登录浏览，不含用户积分与角色）。
+     *
+     * @param shopId 店铺 ID
+     * @return 店铺详情读模型
+     */
+    public ShopDetailRes getDetailByShopId(Long shopId) {
+        if (shopId == null) {
+            throw new ServiceException("店铺 ID 不能为空", 400);
+        }
+        return mobiShopService.getShopDetail(shopId);
+    }
+
+    /**
      * 缓存旁路：优先读缓存，未命中时回源数据库并回填缓存。
      *
      * @param shopIds 店铺 ID 列表（保持入参顺序）

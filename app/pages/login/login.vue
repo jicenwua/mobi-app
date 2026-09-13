@@ -1,5 +1,17 @@
 <template>
 	<view class="page">
+		<view class="page-header" :style="headerStyle">
+			<view
+				class="back-btn"
+				hover-class="tap-hover-opacity"
+				:hover-stay-time="70"
+				@click="goBack"
+			>
+				<text class="back-glyph">‹</text>
+				<text class="back-text">返回</text>
+			</view>
+		</view>
+
 		<view class="brand">
 			<view class="brand-logo-wrap">
 				<image class="brand-logo" src="/static/尚品发艺.png" mode="aspectFill" />
@@ -48,6 +60,7 @@ import { onLoad, onReady } from '@dcloudio/uni-app'
 import { fetchCurrentUserInfo } from '@/api/modules/auth.js'
 import { performQuickLogin, resolvePostLoginPath } from '@/services/login-flow.js'
 import { resetAppSession } from '@/services/app-session.js'
+import { setGuestMode } from '@/services/guest-mode.js'
 import { hasCompletedProfileSetup } from '@/services/user-profile.js'
 import PrivacyPopup from '@/components/privacy/privacy-popup.vue'
 import {
@@ -67,12 +80,20 @@ const loggingIn = ref(false)
 const errorMsg = ref('')
 const agreedToPrivacy = ref(false)
 const privacyContractName = ref('用户隐私保护指引')
+const statusBarHeight = ref(0)
+
+const headerStyle = computed(() => ({
+	paddingTop: `${statusBarHeight.value || 0}px`
+}))
 
 const privacyContractLabel = computed(() =>
 	formatPrivacyContractLabel(privacyContractName.value)
 )
 
 onLoad(async (options) => {
+	const sys = uni.getSystemInfoSync()
+	statusBarHeight.value = sys.statusBarHeight || 20
+
 	const launchInvite = parseLaunchShopInvite(options)
 	if (launchInvite?.token) {
 		savePendingShopInvite(launchInvite.token)
@@ -125,6 +146,17 @@ function onPrivacyToggle() {
 
 function openPrivacyGuide() {
 	openPrivacyContract()
+}
+
+function goBack() {
+	if (loggingIn.value) return
+	setGuestMode(true)
+	const pages = getCurrentPages()
+	if (pages.length > 1) {
+		uni.navigateBack()
+		return
+	}
+	uni.reLaunch({ url: '/pages/main/main' })
 }
 
 function onWxLoginTap() {
@@ -183,11 +215,41 @@ async function runLogin() {
 	background: linear-gradient(180deg, #f0f6ff 0%, #f5f5f5 45%);
 }
 
+.page-header {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	z-index: 10;
+	box-sizing: border-box;
+}
+
+.back-btn {
+	display: inline-flex;
+	align-items: center;
+	height: 44px;
+	padding: 0 12px;
+}
+
+.back-glyph {
+	font-size: 28px;
+	font-weight: 300;
+	line-height: 1;
+	margin-top: -2px;
+	color: #007aff;
+}
+
+.back-text {
+	margin-left: 2px;
+	font-size: 16px;
+	color: #007aff;
+}
+
 .brand {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 22vh;
+	margin-top: calc(22vh + 44px);
 }
 
 .brand-logo-wrap {

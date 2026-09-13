@@ -32,6 +32,10 @@
     "ignore": [],
     "include": []
   },
-  "editorSetting": {},
-  "libVersion": "3.16.1"
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "libVersion": "3.16.1",
+  "condition": {}
 }

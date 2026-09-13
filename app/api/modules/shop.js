@@ -283,6 +283,37 @@ export function fetchEnterShopByCode(shopCode) {
 }
 
 /**
+ * 按店铺 ID 查询店铺详情（未登录浏览）GET /shop/guest?shopId=
+ */
+export function fetchShopPreviewById(shopId) {
+	const id = shopId != null && shopId !== '' ? String(shopId) : ''
+	return new Promise((resolve) => {
+		if (!id) {
+			resolve({ ok: false, data: null, msg: '店铺信息无效' })
+			return
+		}
+		request({
+			service: 'customer',
+			path: CUSTOMER_API.SHOP_GUEST_PREVIEW,
+			method: 'GET',
+			data: { shopId: id },
+			success: (res) => {
+				const body = unwrapResponseBody(res.data)
+				const ok = res.statusCode === 200 && isApiSuccess(body)
+				const data = ok ? normalizeShopDetail(body.data) : null
+				if (data) setCachedShopDetail(data.id, data)
+				resolve({
+					ok,
+					data,
+					msg: body.msg || (ok ? '查询成功' : '查询失败')
+				})
+			},
+			fail: (err) => resolve({ ok: false, data: null, msg: err.errMsg || '网络错误' })
+		})
+	})
+}
+
+/**
  * 从用户店铺列表中查找指定店铺（无卡片透传时的兜底）。
  * 列表接口 GET /shop 已返回 ShopDetailRes 读模型。
  */
@@ -499,6 +530,7 @@ const enterTimeLastAt = new Map()
  * 同店铺在冷却期内不重复请求，避免频繁进出详情页刷接口。
  */
 export function reportShopEnterTimeAsync(shopId) {
+	if (!getToken()) return
 	const id = shopId != null && shopId !== '' ? String(shopId) : ''
 	if (!id) return
 

@@ -3,6 +3,7 @@ package com.xcz.member.customer.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xcz.commons.core.domain.ResponseEntity;
 import com.xcz.commons.core.utils.response.ResponseEntityUtils;
+import com.xcz.commons.security.annotation.Release;
 import com.xcz.member.customer.api.dto.request.shop.ShopCreatePayloadReq;
 import com.xcz.member.customer.api.dto.request.shop.ShopReq;
 import com.xcz.member.customer.api.dto.response.shop.ShopDetailRes;
@@ -130,6 +131,18 @@ public class MobiShopController {
     public ResponseEntity<ShopDetailRes> previewByShopCode(@PathVariable String shopCode) {
         ShopDetailRes detailByShopCode = shopApplicationQueryService.getDetailByShopCode(shopCode);
         return ResponseEntityUtils.ok(detailByShopCode, "查询成功");
+    }
+
+    /**
+     * 未登录浏览店铺详情（按店铺 ID），返回店铺基础信息与商品列表，不含用户积分。
+     *
+     * @param shopId 店铺 ID
+     * @return 店铺详情
+     */
+    @Release
+    @GetMapping("/guest")
+    public ResponseEntity<ShopDetailRes> previewByShopId(@RequestParam Long shopId) {
+        return ResponseEntityUtils.ok(shopApplicationQueryService.getDetailByShopId(shopId), "查询成功");
     }
 
     /**

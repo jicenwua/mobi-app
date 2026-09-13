@@ -1,8 +1,10 @@
 import { ref, computed, watch, toRef } from 'vue'
+import { getToken } from '@/api/modules/auth-token.js'
 import {
 	normalizeShopDetail,
 	isUsableShopDetail,
 	fetchShopFromUserList,
+	fetchShopPreviewById,
 	fetchShopProductCatalog,
 	fetchShopMemberExtras,
 	formatShopAddress,
@@ -11,6 +13,7 @@ import {
 import { formatPointsAmount } from '@/utils/points-format.js'
 import { formatActivityTimeRange, formatActivityRule } from '@/utils/activity-display.js'
 import { canShowMemberTab, canGeneratePayQrcode, canManageShop, canStaffVerifyAtShop } from '@/utils/wx-perm.js'
+import { requireLogin } from '@/services/guest-mode.js'
 import { scanStaffVerifyCode } from '@/utils/staff-scan.js'
 import { isShopClerkCapable } from '@/utils/shop-role.js'
 import { useMemberShopCart } from '@/composables/use-member-shop-cart.js'
@@ -50,7 +53,7 @@ export function useMemberShopDetail(props) {
 		return formatPointsAmount(n)
 	})
 
-	const canPayQrcode = computed(() => canShowMemberTab())
+	const canPayQrcode = computed(() => !!detail.value)
 	const showManageLink = computed(() => isShopClerkCapable(detail.value) && canManageShop())
 	const showScanVerifyBtn = computed(() => canStaffVerifyAtShop(detail.value))
 
@@ -74,8 +77,9 @@ export function useMemberShopDetail(props) {
 	}
 
 	function goPayQrcode() {
+		if (!requireLogin()) return
 		if (!canGeneratePayQrcode()) {
-			uni.showToast({ title: '无付款码权限', icon: 'none' })
+			uni.showToast({ title: '无积分码权限', icon: 'none' })
 			return
 		}
 		uni.navigateTo({
@@ -132,6 +136,7 @@ export function useMemberShopDetail(props) {
 	}
 
 	async function loadAsyncMemberExtras(id, token) {
+		if (!getToken()) return
 		const includeCoupons = promo.shouldIncludeCouponsInExtras()
 		const extrasRes = await fetchShopMemberExtras(id, { includeCoupons })
 		if (token !== detailLoadToken || !detail.value) return
@@ -151,15 +156,31 @@ export function useMemberShopDetail(props) {
 	async function loadDetailFallback(token) {
 		if (token !== detailLoadToken) return
 		if (detail.value && isUsableShopDetail(detail.value)) return
-		if (!canShowMemberTab()) {
-			errorMsg.value = '无会员访问权限'
+		const id = shopId.value
+		if (!id) {
+			errorMsg.value = '店铺信息无效'
 			loading.value = false
 			detail.value = null
 			return
 		}
-		const id = shopId.value
-		if (!id) {
-			errorMsg.value = '店铺信息无效'
+		if (!getToken() && !canShowMemberTab()) {
+			loading.value = true
+			errorMsg.value = ''
+			const guestRes = await fetchShopPreviewById(id)
+			if (token !== detailLoadToken) return
+			if (!guestRes.ok || !guestRes.data) {
+				loading.value = false
+				errorMsg.value = guestRes.msg || '加载失败'
+				detail.value = null
+				return
+			}
+			finishDetailLoad(guestRes.data)
+			if (token !== detailLoadToken) return
+			await loadMemberDetailExtras(token)
+			return
+		}
+		if (!canShowMemberTab()) {
+			errorMsg.value = '无会员访问权限'
 			loading.value = false
 			detail.value = null
 			return
@@ -181,15 +202,31 @@ export function useMemberShopDetail(props) {
 	}
 
 	async function applyShop(data) {
-		if (!canShowMemberTab()) {
-			errorMsg.value = '无会员访问权限'
+		const id = shopId.value
+		if (!id) {
+			errorMsg.value = '店铺信息无效'
 			loading.value = false
 			detail.value = null
 			return
 		}
-		const id = shopId.value
-		if (!id) {
-			errorMsg.value = '店铺信息无效'
+		if (!getToken() && !canShowMemberTab()) {
+			if (isUsableShopDetail(data)) {
+				const normalized = normalizeShopDetail(data)
+				if (String(normalized.id) === String(id)) {
+					detailLoadToken += 1
+					const token = detailLoadToken
+					loading.value = true
+					errorMsg.value = ''
+					finishDetailLoad(normalized)
+					await loadMemberDetailExtras(token)
+					return
+				}
+			}
+			await loadDetailFallback(detailLoadToken)
+			return
+		}
+		if (!canShowMemberTab()) {
+			errorMsg.value = '无会员访问权限'
 			loading.value = false
 			detail.value = null
 			return

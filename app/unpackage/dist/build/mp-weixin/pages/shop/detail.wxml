@@ -1,1 +1,1 @@
-<shop-detail-content wx:if="{{b}}" class="r" u-r="detailRef" u-i="0c8ebaaa-0" bind:__l="__l" u-p="{{b}}"/>
+<shop-detail-content wx:if="{{b}}" class="r" u-r="detailRef" u-i="75d12100-0" bind:__l="__l" u-p="{{b}}"/>

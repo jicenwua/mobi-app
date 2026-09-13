@@ -16,6 +16,8 @@ export const CUSTOMER_API = {
 	SHOP_LIST: '/shop',
 	/** 按店铺代码预览店铺 GET /shop/enter/{shopCode} */
 	SHOP_ENTER_INFO: '/shop/enter',
+	/** 未登录浏览店铺 GET /shop/guest?shopId= */
+	SHOP_GUEST_PREVIEW: '/shop/guest',
 	/** 加入店铺 POST：shopId */
 	SHOP_ENTER: '/shop/enter',
 	/** 店长扫码添加店员 POST：shopId + token */

@@ -36,8 +36,11 @@
 						>管理</text>
 					</view>
 				</view>
-				<view v-if="detail.ratio != null" class="ratio-chip">
-					<text class="ratio-text">1 元 = {{ detail.ratio }} 积分</text>
+				<view v-if="detail.ratio != null" class="ratio-row">
+					<view class="ratio-chip">
+						<text class="ratio-text">1 元 = {{ detail.ratio }} 积分</text>
+					</view>
+					<text class="ratio-note">（线上不提供积分充值服务，只展示积分兑换率，请到店铺线下充值）</text>
 				</view>
 				<view v-if="shopPhone || shopAddress" class="shop-meta-row">
 					<view
@@ -72,7 +75,7 @@
 					:hover-stay-time="70"
 					@click="goPayQrcode"
 				>
-					<text class="pay-qrcode-text">出示付款码</text>
+					<text class="pay-qrcode-text">出示积分码</text>
 				</view>
 			</view>
 
@@ -408,9 +411,16 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 	color: #5ac8fa;
 }
 
+.ratio-row {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+	margin-top: 8px;
+}
+
 .ratio-chip {
 	display: inline-flex;
-	margin-top: 8px;
 	padding: 3px 10px;
 	border-radius: 20px;
 }
@@ -439,10 +449,24 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 	opacity: 1;
 }
 
+.ratio-note {
+	font-size: 11px;
+	line-height: 1.45;
+}
+
+.detail-root--light .ratio-note {
+	color: #999999;
+}
+
+.detail-root--dark .ratio-note {
+	color: #888888;
+}
+
 .shop-meta-row {
 	display: flex;
-	align-items: center;
-	gap: 10px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 	margin-top: 10px;
 	min-width: 0;
 }
@@ -456,9 +480,9 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 
 .shop-meta-address {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 4px;
-	flex: 1;
+	width: 100%;
 	min-width: 0;
 }
 
@@ -488,9 +512,8 @@ defineExpose({ applyShop, reload, syncCartFromCache })
 	font-size: 13px;
 	line-height: 1.45;
 	opacity: 0.72;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	white-space: normal;
+	word-break: break-all;
 }
 
 .points-summary {

@@ -189,6 +189,7 @@
 			<view v-if="activeTab === 'mine'" class="mine-panel">
 				<MainMinePanel
 					class="mine-panel-component"
+					:is-logged-in="loggedIn"
 					:user-profile="userProfile"
 					:display-nickname="displayNickname"
 					:profile-sub-text="profileSubText"
@@ -202,6 +203,7 @@
 					@pay-qrcode="goPayQrcode"
 					@set-password="goSetPassword"
 					@tickets="goTickets"
+					@login="goLoginPage"
 				/>
 			</view>
 		</view>
@@ -233,9 +235,14 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { onLoad, onShow, onUnload } from '@dcloudio/uni-app'
-import { getToken, fetchCurrentUserInfo } from '@/api/modules/auth.js'
+import { fetchCurrentUserInfo } from '@/api/modules/auth.js'
 import { bootstrapAppSession } from '@/services/app-session.js'
-import { ensureAuthenticated } from '@/services/auth-relogin.js'
+import {
+	DEFAULT_GUEST_SHOP_ID,
+	isLoggedIn as checkLoggedIn,
+	requireLogin,
+	setGuestMode
+} from '@/services/guest-mode.js'
 import {
 	getUserProfile,
 	hasCompletedProfileSetup
@@ -273,7 +280,7 @@ const NAV_INNER_HEIGHT = 44
 const { isDark, loadTheme, toggleTheme } = useTheme()
 
 const ALL_TABS = [
-	{ key: 'member', label: '会员', visible: () => canShowMemberTab() },
+	{ key: 'member', label: '会员', visible: () => canShowMemberTab() || !checkLoggedIn() },
 	{ key: 'orders', label: '订单', visible: () => canShowMemberTab() },
 	{ key: 'mine', label: '我的', visible: () => true }
 ]
@@ -312,6 +319,7 @@ const userProfile = ref({ avatar: '', nickname: '' })
 const couponCount = ref(0)
 const ticketUnreadCount = ref(0)
 const payPasswordSet = ref(false)
+const loggedIn = ref(false)
 
 const {
 	memberList,
@@ -466,29 +474,38 @@ const LOGIN_PAGE = '/pages/login/login'
 const PROFILE_SETUP_PAGE = '/pages/login/profile-setup'
 
 function goLoginPage() {
-	uni.redirectTo({ url: LOGIN_PAGE })
+	uni.navigateTo({
+		url: LOGIN_PAGE,
+		animationType: 'slide-in-right',
+		animationDuration: 200
+	})
 }
 
 function goProfileSetupPage() {
 	uni.redirectTo({ url: PROFILE_SETUP_PAGE })
 }
 
-/** 启动会话：未登录则跳转登录页 */
+/** 启动会话：未登录则进入游客模式，默认展示店铺 1 */
 async function initSession() {
 	loginError.value = ''
 	sessionBooting.value = true
 	try {
-		const { loginResult, needLogin } = await bootstrapAppSession()
-		if (needLogin) {
-			goLoginPage()
+		await bootstrapAppSession()
+		loggedIn.value = checkLoggedIn()
+
+		if (!loggedIn.value) {
+			setGuestMode(true)
+			applyDefaultTabOnLaunch()
+			const targetShopId = launchShopId || DEFAULT_GUEST_SHOP_ID
+			openMemberDetailById(targetShopId)
+			launchShopId = ''
 			return
 		}
+
+		setGuestMode(false)
 		if (!hasCompletedProfileSetup()) {
 			goProfileSetupPage()
 			return
-		}
-		if (!loginResult.ok) {
-			loginError.value = loginResult.msg || '登录失败，请稍后重试'
 		}
 		refreshMineData()
 		applyDefaultTabOnLaunch()
@@ -563,10 +580,12 @@ onLoad((options) => {
 })
 
 onShow(async () => {
-	if (!getToken()) {
-		const auth = await ensureAuthenticated()
-		if (!auth.ok) return
+	loggedIn.value = checkLoggedIn()
+	if (!loggedIn.value) {
+		setGuestMode(true)
+		return
 	}
+	setGuestMode(false)
 	connectNotifySocket()
 	userProfile.value = getUserProfile()
 	await fetchCurrentUserInfo()
@@ -586,6 +605,7 @@ onShow(async () => {
 
 /** 跳转个人资料（微信小程序不支持 uni.preloadPage） */
 function goProfile() {
+	if (!requireLogin()) return
 	setProfileEditCache(getUserProfile())
 	uni.navigateTo({
 		url: '/pages/mine/profile',
@@ -596,6 +616,7 @@ function goProfile() {
 
 /** 跳转设置支付密码 */
 function goSetPassword() {
+	if (!requireLogin()) return
 	uni.navigateTo({
 		url: '/pages/mine/set-password',
 		animationType: 'slide-in-right',
@@ -605,6 +626,7 @@ function goSetPassword() {
 
 /** 跳转折扣券页 */
 function goCoupons() {
+	if (!requireLogin()) return
 	uni.navigateTo({
 		url: '/pages/mine/coupons',
 		animationType: 'slide-in-right',
@@ -614,6 +636,7 @@ function goCoupons() {
 
 /** 跳转客服工单页 */
 function goTickets() {
+	if (!requireLogin()) return
 	uni.navigateTo({
 		url: '/pages/mine/tickets',
 		animationType: 'slide-in-right',
@@ -621,10 +644,11 @@ function goTickets() {
 	})
 }
 
-/** 跳转付款码页 */
+/** 跳转积分码页 */
 function goPayQrcode() {
+	if (!requireLogin()) return
 	if (!canGeneratePayQrcode()) {
-		uni.showToast({ title: '无付款码权限', icon: 'none' })
+		uni.showToast({ title: '无积分码权限', icon: 'none' })
 		return
 	}
 	uni.navigateTo({

@@ -2,6 +2,7 @@ import { reactive, computed, ref } from 'vue'
 import { getShopCart, setShopCart } from '@/utils/shop-cart-cache.js'
 import { setShopPurchaseContext, flattenProductCategories } from '@/utils/shop-purchase-context.js'
 import { formatPointsAmount } from '@/utils/points-format.js'
+import { requireLogin } from '@/services/guest-mode.js'
 
 /**
  * 会员店铺详情 — 购物车与结算
@@ -70,6 +71,7 @@ export function useMemberShopCart(shopId, { productCategories, detail }) {
 	}
 
 	function onCartQtyChange({ product, delta }) {
+		if (delta > 0 && !requireLogin()) return
 		const id = product?.productId
 		if (id == null) return
 		const cur = Number(cart[id]) || 0
@@ -89,6 +91,7 @@ export function useMemberShopCart(shopId, { productCategories, detail }) {
 	}
 
 	function goPurchaseConfirm() {
+		if (!requireLogin()) return
 		if (cartItemCount.value <= 0) {
 			uni.showToast({ title: '请选择商品', icon: 'none' })
 			return

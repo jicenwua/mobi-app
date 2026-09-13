@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "付款码",
+  "navigationBarTitleText": "积分码",
   "animationType": "slide-in-right",
   "animationDuration": 200,
   "usingComponents": {

@@ -1,6 +1,7 @@
 <template>
 	<view class="mine-panel-content" :class="isDark ? 'theme-dark' : 'theme-light'">
 		<view
+			v-if="isLoggedIn"
 			class="profile-card"
 			hover-class="tap-hover-row"
 			:hover-stay-time="70"
@@ -18,6 +19,20 @@
 			</view>
 			<text class="cell-arrow">›</text>
 		</view>
+		<view v-else class="profile-card profile-card--guest">
+			<view class="profile-meta profile-meta--guest">
+				<text class="profile-guest-title">登录后使用完整会员服务</text>
+				<text class="profile-guest-sub">折扣券、积分码、订单等</text>
+			</view>
+			<view
+				class="profile-login-btn"
+				hover-class="tap-hover-opacity"
+				:hover-stay-time="70"
+				@click="emit('login')"
+			>
+				<text class="profile-login-btn-text">登录</text>
+			</view>
+		</view>
 
 		<view class="menu-card">
 			<view class="menu-row" hover-class="tap-hover-row" :hover-stay-time="70" @click="emit('coupons')">
@@ -29,7 +44,7 @@
 			</view>
 			<view class="menu-divider" />
 			<view class="menu-row" hover-class="tap-hover-row" :hover-stay-time="70" @click="emit('pay-qrcode')">
-				<text class="menu-label">付款码</text>
+				<text class="menu-label">积分码</text>
 				<view class="menu-row-right">
 					<text class="menu-value menu-value--action">出示</text>
 					<text class="cell-arrow">›</text>
@@ -63,6 +78,10 @@
 import { computed } from 'vue'
 
 const props = defineProps({
+	isLoggedIn: {
+		type: Boolean,
+		default: false
+	},
 	userProfile: {
 		type: Object,
 		required: true
@@ -97,7 +116,7 @@ const props = defineProps({
 	}
 })
 
-const emit = defineEmits(['profile', 'coupons', 'pay-qrcode', 'set-password', 'tickets'])
+const emit = defineEmits(['profile', 'coupons', 'pay-qrcode', 'set-password', 'tickets', 'login'])
 
 const unreadBadgeText = computed(() => {
 	const count = props.ticketUnreadCount
@@ -160,6 +179,56 @@ export default {
 	font-size: 26px;
 	color: #ffffff;
 	font-weight: 600;
+}
+
+.profile-card--guest {
+	justify-content: space-between;
+}
+
+.profile-meta--guest {
+	gap: 4px;
+}
+
+.profile-guest-title {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.profile-guest-sub {
+	font-size: 12px;
+}
+
+.theme-light .profile-guest-sub {
+	color: #666666;
+}
+
+.theme-dark .profile-guest-sub {
+	color: #a8a8a8;
+}
+
+.profile-login-btn {
+	flex-shrink: 0;
+	min-width: 72px;
+	height: 36px;
+	padding: 0 16px;
+	border-radius: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.theme-light .profile-login-btn {
+	background-color: #007aff;
+}
+
+.theme-dark .profile-login-btn {
+	background-color: #0a84ff;
+}
+
+.profile-login-btn-text {
+	font-size: 14px;
+	font-weight: 600;
+	color: #ffffff;
 }
 
 .profile-meta {

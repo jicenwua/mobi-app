@@ -1,6 +1,7 @@
 import { clearAuthSession, getToken } from '@/api/modules/auth-token.js'
 import { disconnectNotifySocket } from '@/services/notify-socket.js'
 import { getPrivacySettingState } from '@/utils/wx-privacy.js'
+import { isGuestMode } from '@/services/guest-mode.js'
 
 const LOGIN_PAGE = '/pages/login/login'
 
@@ -94,9 +95,10 @@ export async function syncPermissionsAfterTokenRefresh() {
 	return permissionSyncPromise
 }
 
-/** 无法自动登录时跳转登录页（已在登录页则跳过） */
+/** 无法自动登录时跳转登录页（已在登录页或游客浏览模式则跳过） */
 export function redirectToLoginIfNeeded(loginResult) {
 	if (loginResult?.ok) return
+	if (isGuestMode()) return
 	if (isOnLoginPage()) return
 	uni.reLaunch({ url: LOGIN_PAGE })
 }

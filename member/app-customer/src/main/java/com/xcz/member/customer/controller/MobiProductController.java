@@ -2,6 +2,7 @@ package com.xcz.member.customer.controller;
 
 import com.xcz.commons.core.domain.ResponseEntity;
 import com.xcz.commons.core.utils.response.ResponseEntityUtils;
+import com.xcz.commons.security.annotation.Release;
 import com.xcz.member.customer.api.dto.request.product.ProductCategoryReq;
 import com.xcz.member.customer.api.dto.request.product.ProductReq;
 import com.xcz.member.customer.api.dto.response.product.ProductCategoryRes;
@@ -33,6 +34,7 @@ public class MobiProductController {
      * @param shopId 店铺 ID
      * @return 分类及商品列表
      */
+    @Release
     @GetMapping("/catalog")
     public ResponseEntity<List<ProductCategoryRes>> getCatalog(@RequestParam Long shopId) {
         return ResponseEntityUtils.ok(productApplicationQueryService.getCatalog(shopId), "查询成功");
